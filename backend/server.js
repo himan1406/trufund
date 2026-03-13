@@ -1,8 +1,10 @@
 const express = require("express")
 const cors = require("cors")
 const cookieParser = require("cookie-parser")
+const path = require("path")
 
 const authRoutes = require("./routes/auth")
+const userRoutes = require("./routes/users")
 
 const app = express()
 
@@ -14,13 +16,17 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
-app.use("/api/auth", authRoutes)
+/* serve uploaded profile pictures as static files */
+app.use("/uploads", express.static(path.join(__dirname, "uploads")))
 
-app.listen(5000,()=>{
+app.use("/api/auth", authRoutes)
+app.use("/api/users", userRoutes)
+
+app.listen(5000, () => {
   console.log("Server running on port 5000")
 })
 
-app.post("/debug",(req,res)=>{
-console.log("DEBUG BODY:",req.body)
-res.json(req.body)
+app.post("/debug", (req, res) => {
+  console.log("DEBUG BODY:", req.body)
+  res.json(req.body)
 })

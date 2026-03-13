@@ -6,6 +6,9 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard"
 import LoadingScreen from "./pages/LoadingScreen"
+import Profile from "./pages/Profile"
+import DonorHistory from "./pages/DonorHistory"
+import EditProfile from "./pages/EditProfile"
 
 <Route path="/dashboard" element={<Dashboard />} />
 
@@ -25,7 +28,11 @@ function App() {
 
         <Route path="/dashboard" element={<Dashboard />} />
 
-        
+        <Route path="/profile" element={<Profile />} />
+
+        <Route path="/donor-history" element={<DonorHistory />} />
+
+        <Route path="/edit-profile" element={<EditProfile />} />
 
       </Routes>
 

@@ -1,0 +1,522 @@
+@font-face {
+  font-family: "PoppinsExtraBold";
+  src: url("../assets/fonts/Poppins-ExtraBold.ttf");
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../assets/fonts/Montserrat-Regular.ttf");
+}
+
+body {
+  margin: 0;
+  font-family: "Montserrat";
+}
+
+/* ── LAYOUT (shared with dashboard) ── */
+
+.dashboard-wrapper {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #1c4e14, #97a6c7);
+  z-index: 0;
+}
+
+.background::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: url("../assets/images/background.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.25;
+}
+
+.brand {
+  position: absolute;
+  top: 52px; left: 50px;
+  font-family: "PoppinsExtraBold";
+  font-size: 44px;
+  color: white;
+  text-shadow: 0 4px 12px rgba(0,0,0,.45);
+  z-index: 2;
+}
+
+/* ── SIDEBAR ── */
+
+.sidebar {
+  position: absolute;
+  left: 50px; top: 170px;
+  width: 240px;
+  color: white;
+  z-index: 2;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: "Montserrat";
+  text-shadow: 0 4px 12px rgba(0,0,0,.55);
+  transition: all .25s ease;
+}
+
+.nav-item:hover {
+  transform: translateX(6px);
+  opacity: .9;
+}
+
+/* Active sidebar item highlight */
+.nav-item.dh-active {
+  opacity: 1;
+  font-weight: 700;
+  transform: translateX(6px);
+}
+
+.nav-item.dh-active .nav-icon {
+  transform: scale(1.15);
+}
+
+.nav-icon {
+  width: 20px; height: 20px;
+  color: white;
+  flex-shrink: 0;
+  transition: all .25s ease;
+}
+
+.nav-item:hover .nav-icon {
+  transform: scale(1.15);
+}
+
+.support {
+  margin-top: 140px;
+}
+
+.support p {
+  opacity: .8;
+  margin-bottom: 18px;
+  font-family: "Montserrat";
+}
+
+/* ── MAIN CARD ── */
+
+.dashboard-card {
+  position: absolute;
+  left: 300px; top: 35px;
+  right: 40px; bottom: 35px;
+  background: #f3f3f3;
+  border-radius: 32px;
+  padding: 35px 45px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* ── TOPBAR ── */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.topbar h2 {
+  font-family: "MontserratBold";
+  font-weight: 1200;
+}
+
+.search-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search {
+  width: 90%;
+  padding: 11px 20px 11px 40px;
+  border-radius: 14px;
+  border: none;
+  background: #e6e6e6;
+  font-family: "Montserrat";
+  font-size: 14px;
+  transition: all .25s ease;
+}
+
+.search:focus {
+  outline: none;
+  background: #dddddd;
+}
+
+.search::placeholder {
+  opacity: .6;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  width: 16px; height: 16px;
+  color: #7a7a7a;
+  pointer-events: none;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: 20px;
+  white-space: nowrap;
+}
+
+.notification-icon {
+  width: 20px; height: 20px;
+  color: black;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.notification-icon:hover { transform: scale(1.1); }
+
+.profile-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.username { font-size: 14px; font-family: "Montserrat"; }
+
+.profile-icon {
+  width: 16px; height: 16px;
+  color: black;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.profile-icon:hover { transform: scale(1.1); }
+
+.profile-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.profile-avatar:hover { transform: scale(1.05); }
+
+.dropdown-menu {
+  position: absolute;
+  top: 42px; right: 0;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  width: 150px;
+  padding: 6px 0;
+  z-index: 10;
+}
+
+.dropdown-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: "Montserrat";
+  transition: background .2s ease;
+}
+
+.dropdown-item:hover { background: #f2f2f2; }
+
+/* ── DONOR HISTORY BODY ── */
+
+.dh-body {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-right: 4px;
+}
+
+.dh-body::-webkit-scrollbar { width: 4px; }
+.dh-body::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+/* ── STAT CARDS ── */
+
+.dh-stats-row {
+  display: flex;
+  gap: 16px;
+  flex-shrink: 0;
+  animation: dhFadeUp 0.4s ease both;
+}
+
+.dh-stat-card {
+  flex: 1;
+  background: white;
+  border-radius: 18px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: all .25s ease;
+}
+
+.dh-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.dh-stat-icon-wrap {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+}
+
+.dh-stat-icon-wrap.green  { background: linear-gradient(135deg, #1c4e14, #3a7d2c); }
+.dh-stat-icon-wrap.blue   { background: linear-gradient(135deg, #1a6b8a, #4aafc9); }
+.dh-stat-icon-wrap.teal   { background: linear-gradient(135deg, #0d7377, #14a085); }
+.dh-stat-icon-wrap.gold   { background: linear-gradient(135deg, #b8860b, #d4a017); }
+
+.dh-stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dh-stat-num {
+  font-family: "PoppinsExtraBold";
+  font-size: 18px;
+  color: #1a1a1a;
+  line-height: 1;
+}
+
+.dh-stat-label {
+  font-family: "Montserrat";
+  font-size: 11px;
+  color: #888;
+}
+
+/* ── FILTER BAR ── */
+
+.dh-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  animation: dhFadeUp 0.4s ease 0.1s both;
+}
+
+.dh-filter-icon {
+  color: #888;
+  flex-shrink: 0;
+}
+
+.dh-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dh-filter-btn {
+  border: none;
+  padding: 6px 14px;
+  border-radius: 16px;
+  background: #e3e3e3;
+  cursor: pointer;
+  font-family: "Montserrat";
+  font-size: 12px;
+  transition: background .3s ease, color .3s ease;
+}
+
+.dh-filter-btn:hover:not(.active) {
+  background: #d4d4d4;
+}
+
+.dh-filter-btn.active {
+  background: linear-gradient(90deg, #1c4e14, #97a6c7);
+  color: white;
+  cursor: default;
+}
+
+/* ── DONATION LIST ── */
+
+.dh-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: dhFadeUp 0.4s ease 0.15s both;
+}
+
+.dh-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: white;
+  border-radius: 18px;
+  padding: 16px 22px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: all .25s ease;
+  animation: dhFadeUp 0.35s ease both;
+}
+
+.dh-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+}
+
+/* AMOUNT BADGE */
+
+.dh-item-left { flex-shrink: 0; }
+
+.dh-amount-badge {
+  width: 64px; height: 64px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1c4e14, #3a7d2c);
+  color: white;
+  font-family: "PoppinsExtraBold";
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(28,78,20,0.3);
+}
+
+/* CENTER INFO */
+
+.dh-item-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dh-campaign-name {
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 14px;
+  color: #1a1a1a;
+}
+
+.dh-message {
+  font-family: "Montserrat";
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
+}
+
+/* RIGHT META */
+
+.dh-item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dh-date {
+  font-family: "Montserrat";
+  font-size: 12px;
+  color: #aaa;
+}
+
+.dh-tag {
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-family: "Montserrat";
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* ── EMPTY STATE ── */
+
+.dh-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 20px;
+  text-align: center;
+  animation: dhFadeUp 0.4s ease both;
+}
+
+.dh-empty-icon { color: #ccc; }
+
+.dh-empty h3 {
+  font-family: "PoppinsExtraBold";
+  font-size: 20px;
+  color: #333;
+  margin: 0;
+}
+
+.dh-empty p {
+  font-family: "Montserrat";
+  font-size: 13px;
+  color: #999;
+  max-width: 260px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.dh-explore-btn {
+  margin-top: 8px;
+  padding: 10px 24px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #1c4e14, #3a7d2c);
+  color: white;
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(28,78,20,0.3);
+  transition: all .25s ease;
+}
+
+.dh-explore-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(28,78,20,0.35);
+}
+
+/* ── LOADING / ERROR ── */
+
+.dh-loading,
+.dh-error {
+  font-family: "Montserrat";
+  font-size: 14px;
+  color: #888;
+  padding: 60px 0;
+  text-align: center;
+}
+
+.dh-error { color: #c0392b; }
+
+/* ── ANIMATION ── */
+
+@keyframes dhFadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
