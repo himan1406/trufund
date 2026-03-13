@@ -1,0 +1,81 @@
+.form-content{
+
+display:flex;
+flex-direction:column;
+
+gap:22px;
+
+}
+
+.form-content label{
+
+font-size:15px;
+font-weight:600;
+
+color:#333;
+
+}
+
+.form-content input{
+
+width:100%;
+
+padding:18px;
+
+border-radius:28px;
+
+background:#e6e6e6;
+
+border:none;
+
+font-size:16px;
+
+transition:all 0.25s ease;
+
+}
+
+/* GREEN FOCUS */
+
+.form-content input:focus{
+
+outline:none;
+
+background:white;
+
+border:2px solid #175f35;
+
+box-shadow:0 0 0 3px rgba(23,95,53,0.25);
+
+transform:scale(1.01);
+
+}
+
+.options{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-top:6px;
+
+font-size:15px;
+
+}
+
+.remember{
+
+display:flex;
+align-items:center;
+
+gap:8px;
+
+white-space:nowrap;
+
+}
+
+.forgot{
+
+cursor:pointer;
+color:#444;
+
+}

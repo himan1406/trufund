@@ -1,0 +1,5 @@
+# paste this into a new .gitignore file at your project root
+node_modules/
+.env
+dist/
+build/
