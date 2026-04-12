@@ -1,0 +1,535 @@
+@font-face {
+    font-family: "PoppinsExtraBold";
+    src: url("../assets/fonts/Poppins-ExtraBold.ttf");
+}
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("../assets/fonts/Montserrat-Regular.ttf");
+}
+
+@font-face {
+    font-family: "MontserratBold";
+    src: url("../assets/fonts/Montserrat-Bold.ttf");
+}
+
+body {
+    margin: 0;
+    font-family: "Montserrat";
+}
+
+.dashboard-wrapper {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #1c4e14, #97a6c7);
+    z-index: 0;
+}
+
+.background::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("../assets/images/background.png") center/cover;
+    opacity: 0.25;
+}
+
+.brand {
+    position: absolute;
+    top: 52px;
+    left: 50px;
+    font-family: "PoppinsExtraBold";
+    font-size: 44px;
+    color: white;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, .45);
+    z-index: 2;
+}
+
+.sidebar {
+    position: absolute;
+    left: 50px;
+    top: 170px;
+    width: 240px;
+    color: white;
+    z-index: 2;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    cursor: pointer;
+    font-weight: 500;
+    font-family: "Montserrat";
+    text-shadow: 0 4px 12px rgba(0, 0, 0, .55);
+    transition: all .25s ease;
+}
+
+.nav-item:hover {
+    transform: translateX(6px);
+    opacity: .9;
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.ad-active {
+    font-weight: 700;
+}
+
+.support {
+    margin-top: 140px;
+}
+
+.support p {
+    opacity: .8;
+    margin-bottom: 18px;
+}
+
+.dashboard-card {
+    position: absolute;
+    left: 300px;
+    top: 35px;
+    right: 40px;
+    bottom: 35px;
+    background: #f3f3f3;
+    border-radius: 32px;
+    padding: 35px 45px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* BODY */
+.ad-body {
+    flex: 1;
+    overflow-y: auto;
+    padding-top: 20px;
+}
+
+.ad-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.ad-body::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+/* HEADER */
+.ad-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.ad-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.ad-shield {
+    color: #1c4e14;
+    flex-shrink: 0;
+}
+
+.ad-title {
+    font-family: "PoppinsExtraBold";
+    font-size: 22px;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.ad-subtitle {
+    font-family: "Montserrat";
+    font-size: 13px;
+    color: #888;
+    margin: 4px 0 0;
+}
+
+.ad-loading,
+.ad-empty,
+.ad-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 60px 20px;
+    text-align: center;
+    color: #bbb;
+}
+
+.ad-empty h3,
+.ad-error h3 {
+    font-family: "Montserrat";
+    font-weight: 700;
+    font-size: 18px;
+    color: #555;
+    margin: 0;
+}
+
+.ad-empty p,
+.ad-error p {
+    font-family: "Montserrat";
+    font-size: 13px;
+    color: #999;
+    margin: 0;
+}
+
+.ad-loading {
+    font-family: "Montserrat";
+    font-size: 14px;
+    color: #888;
+}
+
+/* PROOFS LIST */
+.ad-proofs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 20px;
+}
+
+.ad-proof-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* PROOF HEADER */
+.ad-proof-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    flex-wrap: wrap;
+}
+
+.ad-proof-org {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 180px;
+}
+
+.ad-org-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #eee;
+    flex-shrink: 0;
+}
+
+.ad-org-name {
+    display: block;
+    font-family: "Montserrat";
+    font-weight: 700;
+    font-size: 13px;
+    color: #1a1a1a;
+}
+
+.ad-event-name {
+    display: block;
+    font-family: "Montserrat";
+    font-size: 11px;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+}
+
+.ad-proof-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+}
+
+.ad-milestone-badge {
+    background: #f0f7ee;
+    color: #1c4e14;
+    font-family: "Montserrat";
+    font-weight: 700;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 10px;
+}
+
+.ad-pct-badge {
+    background: #e8e8e8;
+    color: #555;
+    font-family: "Montserrat";
+    font-weight: 700;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 10px;
+}
+
+.ad-amount-badge {
+    background: #fff3cd;
+    color: #b45309;
+    font-family: "Montserrat";
+    font-weight: 700;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 10px;
+}
+
+.ad-proof-time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: "Montserrat";
+    font-size: 11px;
+    color: #aaa;
+    white-space: nowrap;
+}
+
+.ad-expand-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    background: #1c4e14;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: "Montserrat";
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .2s ease;
+    white-space: nowrap;
+}
+
+.ad-expand-btn:hover {
+    background: #2e7d32;
+}
+
+/* PROOF DETAILS */
+.ad-proof-details {
+    padding: 0 20px 20px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ad-section h4 {
+    font-family: "Montserrat";
+    font-weight: 700;
+    font-size: 13px;
+    color: #555;
+    margin: 0 0 8px;
+    padding-top: 16px;
+}
+
+.ad-report-text {
+    font-family: "Montserrat";
+    font-size: 13px;
+    color: #333;
+    line-height: 1.7;
+    margin: 0;
+    background: #f9f9f9;
+    padding: 12px 14px;
+    border-radius: 12px;
+}
+
+.ad-media-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ad-media-item {
+    text-decoration: none;
+}
+
+.ad-media-img {
+    width: 100px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #eee;
+    transition: transform .2s;
+}
+
+.ad-media-img:hover {
+    transform: scale(1.05);
+}
+
+.ad-media-doc {
+    width: 100px;
+    height: 80px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-family: "Montserrat";
+    font-size: 10px;
+    color: #888;
+    border: 2px solid #eee;
+}
+
+.ad-escrow-info {
+    display: flex;
+    gap: 12px;
+    background: #f5f5f5;
+    border-radius: 14px;
+    padding: 14px 16px;
+}
+
+.ad-escrow-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    text-align: center;
+}
+
+.ad-escrow-label {
+    font-family: "Montserrat";
+    font-size: 11px;
+    color: #888;
+}
+
+.ad-escrow-val {
+    font-family: "PoppinsExtraBold";
+    font-size: 14px;
+    color: #1a1a1a;
+}
+
+.ad-escrow-stat.highlight .ad-escrow-val {
+    color: #1c4e14;
+}
+
+.ad-view-event-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: #f0f0f0;
+    color: #555;
+    border: none;
+    border-radius: 12px;
+    font-family: "Montserrat";
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .2s ease;
+    align-self: flex-start;
+}
+
+.ad-view-event-btn:hover {
+    background: #e0e0e0;
+}
+
+/* ACTIONS */
+.ad-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    padding-top: 4px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.ad-reject-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.ad-reject-note {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    font-family: "Montserrat";
+    font-size: 12px;
+    resize: none;
+    outline: none;
+    transition: border .2s;
+    box-sizing: border-box;
+}
+
+.ad-reject-note:focus {
+    border-color: #e74c3c;
+}
+
+.ad-reject-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    background: white;
+    color: #e74c3c;
+    border: 1.5px solid #e74c3c;
+    border-radius: 14px;
+    font-family: "Montserrat";
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s ease;
+    white-space: nowrap;
+}
+
+.ad-reject-btn:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+.ad-reject-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ad-approve-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 24px;
+    background: linear-gradient(90deg, #1c4e14, #3a7d2c);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: "Montserrat";
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(28, 78, 20, 0.3);
+    transition: all .25s ease;
+    white-space: nowrap;
+}
+
+.ad-approve-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(28, 78, 20, 0.4);
+}
+
+.ad-approve-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}

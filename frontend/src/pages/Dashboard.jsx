@@ -12,12 +12,10 @@ KeyboardMusic,
 Users,
 Settings,
 MessageCircleQuestionMark,
-Search,
-CircleArrowDown,
-Bell
 } from "lucide-react"
 
-import defaultProfile from "../assets/images/default_profile.jpg"
+import Topbar from "../components/Topbar"
+import CreatePostModal from "../components/CreatePostModal"
 
 const mockTopEvents = [
   { org: "GreenRoots Foundation", event: "Big Feed Drive", progress: 72 },
@@ -36,10 +34,7 @@ const mockTrending = [
 export default function Dashboard(){
 
 const [category,setCategory] = useState("Education")
-const [menuOpen,setMenuOpen] = useState(false)
 const navigate = useNavigate()
-
-const username = localStorage.getItem("username") || "Username"
 
 return(
 
@@ -60,7 +55,7 @@ return(
     <div className="nav-item" onClick={() => navigate("/donor-history")}>
         <History className="nav-icon" />Donor History
     </div>
-    <div className="nav-item"><Blend className="nav-icon"/>Following</div>
+    <div className="nav-item" onClick={() => navigate("/following")}><Blend className="nav-icon"/>Following</div>
     <div className="nav-item"><KeyboardMusic className="nav-icon"/>Creator Studio</div>
   </div>
 
@@ -80,56 +75,7 @@ return(
 
   {/* TOPBAR */}
 
-  <div className="topbar">
-
-    <h2>Dashboard</h2>
-
-    <div className="search-container">
-      <Search className="search-icon"/>
-      <input
-        className="search"
-        placeholder="Search Events, NGOs, People"
-      />
-    </div>
-
-    <div className="profile">
-
-      <Bell className="notification-icon"/>
-
-      <div className="profile-dropdown">
-
-        <CircleArrowDown
-          className="profile-icon"
-          onClick={()=>setMenuOpen(!menuOpen)}
-        />
-
-        <span className="username">{username}</span>
-
-        <img
-          src={defaultProfile}
-          alt="profile"
-          className="profile-avatar"
-        />
-
-        {menuOpen && (
-          <div className="dropdown-menu">
-            <div
-              className="dropdown-item"
-              onClick={()=>{ setMenuOpen(false); navigate("/profile") }}
-            >
-              Profile
-            </div>
-            <div className="dropdown-item" onClick={() => { setMenuOpen(false); navigate("/edit-profile") }}>
-                Edit Profile
-            </div>
-          </div>
-        )}
-
-      </div>
-
-    </div>
-
-  </div>
+  <Topbar title="Dashboard" />
 
 
   {/* BODY */}
@@ -217,6 +163,8 @@ return(
     </div>
 
   </div>
+
+  <CreatePostModal />
 
 </div>
 

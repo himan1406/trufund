@@ -12,9 +12,6 @@ import {
   Users,
   Settings,
   MessageCircleQuestionMark,
-  Search,
-  CircleArrowDown,
-  Bell,
   Heart,
   TrendingUp,
   Calendar,
@@ -22,7 +19,8 @@ import {
   Filter,
 } from "lucide-react"
 
-import defaultProfile from "../assets/images/default_profile.jpg"
+import Topbar from "../components/Topbar"
+import CreatePostModal from "../components/CreatePostModal"
 
 export default function DonorHistory() {
 
@@ -33,7 +31,6 @@ export default function DonorHistory() {
   const [filter, setFilter] = useState("All")
 
   const navigate = useNavigate()
-  const username = localStorage.getItem("username") || "Username"
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -87,7 +84,7 @@ export default function DonorHistory() {
           <div className="nav-item"><ZodiacSagittarius className="nav-icon" />Explore</div>
           <div className="nav-item"><Trophy className="nav-icon" />Leaderboard</div>
           <div className="nav-item dh-active"><History className="nav-icon" />Donor History</div>
-          <div className="nav-item"><Blend className="nav-icon" />Following</div>
+          <div className="nav-item" onClick={() => navigate("/following")}><Blend className="nav-icon" />Following</div>
           <div className="nav-item"><KeyboardMusic className="nav-icon" />Creator Studio</div>
         </div>
         <div className="support">
@@ -102,30 +99,7 @@ export default function DonorHistory() {
       <div className="dashboard-card">
 
         {/* TOPBAR */}
-        <div className="topbar">
-          <h2>Donor History</h2>
-          <div className="search-container">
-            <Search className="search-icon" />
-            <input className="search" placeholder="Search Events, NGOs, People" />
-          </div>
-          <div className="profile">
-            <Bell className="notification-icon" />
-            <div className="profile-dropdown">
-              <CircleArrowDown
-                className="profile-icon"
-                onClick={() => setMenuOpen(!menuOpen)}
-              />
-              <span className="username">{username}</span>
-              <img src={defaultProfile} alt="profile" className="profile-avatar" />
-              {menuOpen && (
-                <div className="dropdown-menu">
-                  <div className="dropdown-item" onClick={() => { setMenuOpen(false); navigate("/profile") }}>Profile</div>
-                  <div className="dropdown-item">Edit Profile</div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <Topbar title="Donor History" profileImage={profileData?.user?.profile_image} />
 
         {/* BODY */}
         <div className="dh-body">
@@ -261,6 +235,7 @@ export default function DonorHistory() {
 
         </div>
 
+        <CreatePostModal profileImage={profileData?.user?.profile_image} />
       </div>
     </div>
   )

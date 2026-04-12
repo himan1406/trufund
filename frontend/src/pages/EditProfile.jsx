@@ -22,6 +22,7 @@ import {
   XCircle,
   Eye,
   EyeOff,
+  Shield,
 } from "lucide-react"
 
 import defaultProfile from "../assets/images/default_profile.jpg"
@@ -45,6 +46,7 @@ export default function EditProfile() {
   /* profile form */
   const [username, setUsername] = useState("")
   const [bio, setBio] = useState("")
+  const [showDonationHistory, setShowDonationHistory] = useState(true)
   const [profileSaving, setProfileSaving] = useState(false)
   const [profileMsg, setProfileMsg] = useState(null) // { type: "success"|"error", text }
 
@@ -72,6 +74,7 @@ export default function EditProfile() {
         setCurrentUser(data.user)
         setUsername(data.user.username || "")
         setBio(data.user.bio || "")
+        setShowDonationHistory(data.user.show_donation_history ?? true)
       } catch (err) {
         console.error(err)
       } finally {
@@ -135,7 +138,11 @@ export default function EditProfile() {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username.trim(), bio: bio.trim() })
+        body: JSON.stringify({
+          username: username.trim(),
+          bio: bio.trim(),
+          show_donation_history: showDonationHistory,
+        })
       })
 
       const data = await res.json()
@@ -344,6 +351,24 @@ export default function EditProfile() {
                       placeholder="Tell people about yourself..."
                       rows={3}
                     />
+                  </div>
+
+                  {/* PRIVACY TOGGLE */}
+                  <div className="ep-privacy-row">
+                    <div className="ep-privacy-info">
+                      <Shield size={16} className="ep-privacy-icon" />
+                      <div>
+                        <span className="ep-privacy-label">Donation History</span>
+                        <span className="ep-privacy-sub">Allow others to see your donations</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className={`ep-toggle ${showDonationHistory ? "on" : "off"}`}
+                      onClick={() => { setShowDonationHistory(prev => !prev); setProfileMsg(null) }}
+                    >
+                      <div className="ep-toggle-knob" />
+                    </button>
                   </div>
 
                   {profileMsg && (

@@ -1,0 +1,253 @@
+@font-face { font-family: "PoppinsExtraBold"; src: url("../assets/fonts/Poppins-ExtraBold.ttf"); }
+@font-face { font-family: "Montserrat";      src: url("../assets/fonts/Montserrat-Regular.ttf"); }
+@font-face { font-family: "MontserratBold";  src: url("../assets/fonts/Montserrat-Bold.ttf"); }
+ 
+body { margin: 0; font-family: "Montserrat"; }
+ 
+.dashboard-wrapper  { height: 100vh; width: 100%; position: relative; overflow: hidden; }
+.background         { position: absolute; width: 100%; height: 100%; background: linear-gradient(90deg, #1c4e14, #97a6c7); z-index: 0; }
+.background::after  { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url("../assets/images/background.png"); background-size: cover; background-position: center; opacity: 0.25; }
+.brand              { position: absolute; top: 52px; left: 50px; font-family: "PoppinsExtraBold"; font-size: 44px; color: white; text-shadow: 0 4px 12px rgba(0,0,0,.45); z-index: 2; }
+.sidebar            { position: absolute; left: 50px; top: 170px; width: 240px; color: white; z-index: 2; }
+.nav-item           { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; cursor: pointer; font-weight: 500; font-family: "Montserrat"; text-shadow: 0 4px 12px rgba(0,0,0,.55); transition: all .25s ease; }
+.nav-item:hover     { transform: translateX(6px); opacity: .9; }
+.nav-icon           { width: 20px; height: 20px; color: white; flex-shrink: 0; }
+.nav-item:hover .nav-icon { transform: scale(1.15); }
+.support            { margin-top: 140px; }
+.support p          { opacity: .8; margin-bottom: 18px; }
+.dashboard-card     { position: absolute; left: 300px; top: 35px; right: 40px; bottom: 35px; background: #f3f3f3; border-radius: 32px; padding: 35px 45px; display: flex; flex-direction: column; z-index: 1; overflow: hidden; }
+ 
+/* ── HASHTAG FEED BODY ── */
+.hf-body {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 20px;
+}
+.hf-body::-webkit-scrollbar { width: 4px; }
+.hf-body::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+ 
+.hf-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+ 
+.hf-tag-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(90deg, #1c4e14, #3a7d2c);
+  color: white;
+  font-family: "PoppinsExtraBold";
+  font-size: 18px;
+  padding: 8px 20px;
+  border-radius: 24px;
+  box-shadow: 0 4px 14px rgba(28,78,20,0.3);
+}
+ 
+.hf-count {
+  font-family: "Montserrat";
+  font-size: 13px;
+  color: #888;
+}
+ 
+.hf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  padding-bottom: 20px;
+}
+ 
+.hf-loading { font-family: "Montserrat"; font-size: 14px; color: #888; text-align: center; padding: 60px; }
+.hf-error   { font-family: "Montserrat"; font-size: 14px; color: #e74c3c; text-align: center; padding: 40px; }
+ 
+.hf-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 80px 20px;
+  text-align: center;
+  color: #bbb;
+}
+.hf-empty h3 { font-family: "Montserrat"; font-weight: 700; font-size: 18px; color: #555; margin: 0; }
+.hf-empty p  { font-family: "Montserrat"; font-size: 13px; color: #999; margin: 0; }
+ 
+/* ── POST CARD (shared — used in Feed + HashtagFeed) ── */
+.post-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  transition: box-shadow .2s ease, transform .2s ease;
+  animation: fadeUp 0.3s ease both;
+}
+.post-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+ 
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+ 
+/* MEDIA */
+.post-media-wrap {
+  position: relative;
+  width: 100%;
+  background: #111;
+  max-height: 400px;
+  overflow: hidden;
+}
+ 
+.post-media {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  display: block;
+}
+ 
+/* NAV ARROWS */
+.post-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s ease;
+  z-index: 2;
+}
+.post-nav:hover    { background: rgba(0,0,0,0.75); }
+.post-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+.post-nav-left  { left: 10px; }
+.post-nav-right { right: 10px; }
+ 
+/* DOTS */
+.post-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+}
+.post-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  transition: background .2s ease;
+}
+.post-dot.active { background: white; }
+ 
+/* BODY */
+.post-body { padding: 14px 16px 12px; }
+ 
+/* AUTHOR */
+.post-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.post-author:hover .post-author-username { color: #1c4e14; }
+ 
+.post-author-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #eee;
+  flex-shrink: 0;
+}
+ 
+.post-author-info { display: flex; flex-direction: column; gap: 1px; }
+.post-author-username { font-family: "Montserrat"; font-weight: 700; font-size: 13px; color: #1a1a1a; transition: color .2s; }
+.post-author-date     { font-family: "Montserrat"; font-size: 11px; color: #aaa; }
+ 
+/* CAPTION */
+.post-caption {
+  font-family: "Montserrat";
+  font-size: 13px;
+  color: #333;
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+ 
+.post-hashtag {
+  color: #1c4e14;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .15s ease;
+}
+.post-hashtag:hover { opacity: 0.7; }
+ 
+/* HASHTAG PILLS */
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+ 
+.post-tag-pill {
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 11px;
+  color: #1c4e14;
+  background: #e8f5e9;
+  padding: 4px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.post-tag-pill:hover { background: #1c4e14; color: white; }
+ 
+/* ACTIONS */
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+ 
+.post-like-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 13px;
+  color: #888;
+  padding: 4px 8px;
+  border-radius: 10px;
+  transition: all .2s ease;
+}
+.post-like-btn:hover { color: #e74c3c; background: #fff0f0; }
+.post-like-btn.liked { color: #e74c3c; }
+ 
+.post-delete-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ccc;
+  padding: 4px 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  transition: all .2s ease;
+}
+.post-delete-btn:hover { color: #e74c3c; background: #fff0f0; }

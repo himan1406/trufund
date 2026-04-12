@@ -1,0 +1,67 @@
+@font-face { font-family: "PoppinsExtraBold"; src: url("../assets/fonts/Poppins-ExtraBold.ttf"); }
+@font-face { font-family: "Montserrat";      src: url("../assets/fonts/Montserrat-Regular.ttf"); }
+@font-face { font-family: "MontserratBold";  src: url("../assets/fonts/Montserrat-Bold.ttf"); }
+
+body { margin: 0; font-family: "Montserrat"; }
+
+.dashboard-wrapper { height: 100vh; width: 100%; position: relative; overflow: hidden; }
+.background { position: absolute; width: 100%; height: 100%; background: linear-gradient(90deg, #1c4e14, #97a6c7); z-index: 0; }
+.background::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url("../assets/images/background.png"); background-size: cover; background-position: center; opacity: 0.25; }
+.brand { position: absolute; top: 52px; left: 50px; font-family: "PoppinsExtraBold"; font-size: 44px; color: white; text-shadow: 0 4px 12px rgba(0,0,0,.45); z-index: 2; }
+.sidebar { position: absolute; left: 50px; top: 170px; width: 240px; color: white; z-index: 2; }
+.nav-item { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; cursor: pointer; font-weight: 500; font-family: "Montserrat"; text-shadow: 0 4px 12px rgba(0,0,0,.55); transition: all .25s ease; }
+.nav-item:hover { transform: translateX(6px); opacity: .9; }
+.nav-icon { width: 20px; height: 20px; color: white; flex-shrink: 0; transition: all .25s ease; }
+.nav-item:hover .nav-icon { transform: scale(1.15); }
+.fw-active { font-weight: 700; opacity: 1 !important; }
+.support { margin-top: 140px; }
+.support p { opacity: .8; margin-bottom: 18px; }
+
+.dashboard-card { position: absolute; left: 300px; top: 35px; right: 40px; bottom: 35px; background: #f3f3f3; border-radius: 32px; padding: 35px 45px; display: flex; flex-direction: column; z-index: 1; overflow: hidden; }
+
+/* TOPBAR */
+.topbar { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
+.topbar h2 { font-family: "MontserratBold"; font-size: 20px; white-space: nowrap; }
+.search-container { flex: 1; position: relative; display: flex; align-items: center; }
+.search { width: 90%; padding: 11px 20px 11px 40px; border-radius: 14px; border: none; background: #e6e6e6; font-family: "Montserrat"; font-size: 14px; }
+.search:focus { outline: none; background: #dddddd; }
+.search-icon { position: absolute; left: 14px; width: 16px; height: 16px; color: #7a7a7a; pointer-events: none; }
+.profile { display: flex; align-items: center; gap: 14px; margin-left: 20px; }
+.notification-icon { width: 20px; height: 20px; color: black; cursor: pointer; }
+.fw-topbar-avatar { cursor: pointer; }
+.profile-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd; transition: all .2s ease; }
+.profile-avatar:hover { transform: scale(1.08); }
+
+/* BODY */
+.fw-body { flex: 1; overflow-y: auto; padding-top: 24px; }
+.fw-body::-webkit-scrollbar { width: 4px; }
+.fw-body::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+.fw-loading { font-family: "Montserrat"; font-size: 14px; color: #888; text-align: center; padding: 60px; }
+
+.fw-empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 80px 20px; text-align: center; }
+.fw-empty-icon { color: #bbb; }
+.fw-empty h3 { font-family: "Montserrat"; font-weight: 700; font-size: 18px; color: #444; margin: 0; }
+.fw-empty p  { font-family: "Montserrat"; font-size: 13px; color: #888; max-width: 280px; line-height: 1.6; margin: 0; }
+.fw-explore-btn { padding: 10px 28px; border-radius: 22px; background: linear-gradient(90deg, #1c4e14, #3a7d2c); color: white; font-family: "Montserrat"; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: all .25s ease; box-shadow: 0 4px 12px rgba(28,78,20,0.3); margin-top: 4px; }
+.fw-explore-btn:hover { transform: translateY(-2px); }
+
+.fw-count { font-family: "Montserrat"; font-size: 13px; color: #888; margin-bottom: 20px; }
+.fw-count strong { color: #1c4e14; }
+
+.fw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+
+.fw-card { display: flex; align-items: center; gap: 14px; background: #ececec; border-radius: 18px; padding: 14px 16px; transition: all .2s ease; }
+.fw-card:hover { background: #e4e4e4; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.07); }
+
+.fw-card-avatar-wrap { cursor: pointer; flex-shrink: 0; }
+.fw-card-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #d0d0d0; transition: all .2s ease; }
+.fw-card-avatar-wrap:hover .fw-card-avatar { border-color: #1c4e14; }
+
+.fw-card-info { flex: 1; cursor: pointer; min-width: 0; }
+.fw-card-username { display: block; font-family: "Montserrat"; font-weight: 700; font-size: 13px; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fw-card-name { display: block; font-family: "Montserrat"; font-size: 11px; color: #888; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.fw-unfollow-btn { display: flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 16px; background: white; border: 1.5px solid #ddd; color: #888; font-family: "Montserrat"; font-weight: 700; font-size: 12px; cursor: pointer; transition: all .2s ease; white-space: nowrap; flex-shrink: 0; }
+.fw-unfollow-btn:hover { border-color: #e74c3c; color: #e74c3c; background: #fff5f5; }
+.fw-unfollow-btn:disabled { opacity: 0.5; cursor: not-allowed; }
