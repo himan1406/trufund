@@ -67,11 +67,11 @@ export default function Following() {
       <div className="sidebar">
         <div className="nav">
           <div className="nav-item" onClick={() => navigate("/dashboard")}><LayoutDashboard className="nav-icon" />Dashboard</div>
-          <div className="nav-item"><ZodiacSagittarius className="nav-icon" />Explore</div>
+          <div className="nav-item" onClick={() => navigate("/events")}><ZodiacSagittarius className="nav-icon" />Explore</div>
           <div className="nav-item"><Trophy className="nav-icon" />Leaderboard</div>
           <div className="nav-item" onClick={() => navigate("/donor-history")}><History className="nav-icon" />Donor History</div>
           <div className="nav-item fw-active"><Blend className="nav-icon" />Following</div>
-          <div className="nav-item"><KeyboardMusic className="nav-icon" />Creator Studio</div>
+          <div className="nav-item" onClick={() => navigate("/creator-studio")}><KeyboardMusic className="nav-icon" />Creator Studio</div>
         </div>
         <div className="support">
           <p>Support</p>

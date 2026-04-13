@@ -83,7 +83,7 @@ export default function HashtagFeed() {
           <div className="nav-item" onClick={() => navigate("/dashboard")}>
             <LayoutDashboard className="nav-icon" />Dashboard
           </div>
-          <div className="nav-item">
+          <div className="nav-item" onClick={() => navigate("/events")}>
             <ZodiacSagittarius className="nav-icon" />Explore
           </div>
           <div className="nav-item">
@@ -95,7 +95,7 @@ export default function HashtagFeed() {
           <div className="nav-item" onClick={() => navigate("/following")}>
             <Blend className="nav-icon" />Following
           </div>
-          <div className="nav-item">
+          <div className="nav-item" onClick={() => navigate("/creator-studio")}>
             <KeyboardMusic className="nav-icon" />Creator Studio
           </div>
         </div>

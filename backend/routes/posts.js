@@ -10,8 +10,12 @@ const {
   getUserPosts,
   getHashtagFeed,
   searchHashtags,
+  getTrendingHashtags,
   toggleLike,
   deletePost,
+  getComments,
+  addComment,
+  deleteComment,
 } = require("../controllers/postController")
 
 const protect = require("../middleware/authMiddleware")
@@ -54,6 +58,7 @@ const upload = multer({
 router.get("/feed",                    protect, getFeed)
 router.get("/hashtag/:tag",            protect, getHashtagFeed)
 router.get("/search/hashtags",         protect, searchHashtags)
+router.get("/trending/hashtags",        protect, getTrendingHashtags)
 router.get("/user/:username",          protect, getUserPosts)
 router.post("/",                       protect,
   (req, res, next) => {
@@ -66,5 +71,8 @@ router.post("/",                       protect,
 )
 router.post("/:post_id/like",          protect, toggleLike)
 router.delete("/:post_id",             protect, deletePost)
+router.get("/:post_id/comments",       protect, getComments)
+router.post("/:post_id/comments",      protect, addComment)
+router.delete("/comments/:comment_id", protect, deleteComment)
 
 module.exports = router

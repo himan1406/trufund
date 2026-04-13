@@ -794,3 +794,151 @@ body {
         transform: rotate(360deg);
     }
 }
+
+.ed-media-wrap { position: relative; width: 100%; border-radius: 20px; overflow: hidden; background: #111; max-height: 360px; flex-shrink: 0; }
+.ed-media { width: 100%; max-height: 360px; object-fit: cover; display: block; }
+.ed-nav   { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; transition: background .2s; }
+.ed-nav:hover    { background: rgba(0,0,0,0.75); }
+.ed-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+.ed-nav-left  { left: 12px; }
+.ed-nav-right { right: 12px; }
+.ed-dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+.ed-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.5); transition: background .2s; }
+.ed-dot.active { background: white; }
+ 
+/* INFO */
+.ed-info { padding: 20px 0 16px; }
+.ed-badges { display: flex; gap: 8px; margin-bottom: 10px; }
+.ed-category { padding: 3px 12px; background: #e8f5e9; color: #1c4e14; font-family: "Montserrat"; font-weight: 700; font-size: 12px; border-radius: 20px; }
+.ed-status   { padding: 3px 12px; font-family: "Montserrat"; font-weight: 700; font-size: 12px; border-radius: 20px; text-transform: capitalize; }
+.ed-status.active    { background: #e8f5e9; color: #2e7d32; }
+.ed-status.completed { background: #e3f2fd; color: #1565c0; }
+.ed-status.cancelled { background: #fce4ec; color: #c62828; }
+ 
+.ed-title { font-family: "PoppinsExtraBold"; font-size: 24px; color: #1a1a1a; margin: 0 0 12px; line-height: 1.3; }
+ 
+.ed-creator { display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 10px; transition: opacity .2s; }
+.ed-creator:hover { opacity: 0.75; }
+.ed-creator-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #e8e8e8; }
+.ed-creator span   { font-family: "Montserrat"; font-size: 13px; color: #666; }
+.ed-creator strong { color: #1a1a1a; }
+ 
+.ed-dates { display: flex; align-items: center; gap: 10px; font-family: "Montserrat"; font-size: 12px; color: #888; margin-bottom: 14px; }
+.ed-dates span { display: flex; align-items: center; gap: 4px; }
+ 
+.ed-description { font-family: "Montserrat"; font-size: 14px; color: #444; line-height: 1.7; margin: 0; }
+ 
+/* DONATION STREAM */
+.ed-donations-section { padding: 16px 0 20px; border-top: 1px solid #e8e8e8; margin-top: 4px; }
+.ed-donations-title   { font-family: "Montserrat"; font-weight: 700; font-size: 15px; color: #1a1a1a; margin: 0 0 14px; }
+.ed-donations-count   { font-family: "Montserrat"; font-weight: 400; font-size: 13px; color: #aaa; }
+ 
+.ed-donations-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 24px; background: #f5f5f5; border-radius: 16px; color: #bbb; text-align: center;
+}
+.ed-donations-empty p { font-family: "Montserrat"; font-size: 13px; color: #999; margin: 0; }
+ 
+.ed-donations-list { display: flex; flex-direction: column; gap: 10px; }
+ 
+.ed-donation-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px; background: white;
+  border-radius: 14px; box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  animation: fadeUp .3s ease both;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+ 
+.ed-donation-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, #1c4e14, #3a7d2c);
+  color: white; font-family: "PoppinsExtraBold"; font-size: 16px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+ 
+.ed-donation-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ed-donation-name    { font-family: "Montserrat"; font-weight: 700; font-size: 13px; color: #1a1a1a; }
+.ed-donation-verb    { font-weight: 400; color: #888; }
+.ed-donation-message { font-family: "Montserrat"; font-size: 11px; color: #888; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ed-donation-time    { font-family: "Montserrat"; font-size: 10px; color: #bbb; }
+.ed-donation-amount  { font-family: "PoppinsExtraBold"; font-size: 15px; color: #1c4e14; white-space: nowrap; align-self: center; }
+ 
+/* PROGRESS CARD */
+.ed-progress-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.ed-progress-amounts { margin-bottom: 6px; }
+.ed-raised       { font-family: "PoppinsExtraBold"; font-size: 22px; color: #1c4e14; display: block; }
+.ed-goal-label   { font-family: "Montserrat"; font-size: 12px; color: #888; display: block; margin: 2px 0 12px; }
+.ed-progress-bar { width: 100%; height: 10px; background: #e8e8e8; border-radius: 8px; overflow: hidden; }
+.ed-progress-fill { height: 100%; background: linear-gradient(90deg, #1c4e14, #3a7d2c); border-radius: 8px; transition: width .8s ease; }
+.ed-progress-pct { font-family: "Montserrat"; font-weight: 700; font-size: 13px; color: #555; margin-top: 6px; }
+.ed-donors-count { display: flex; align-items: center; gap: 5px; font-family: "Montserrat"; font-size: 12px; color: #888; margin-top: 8px; }
+ 
+/* DONATE CARD */
+.ed-donate-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.ed-donate-card h3 { font-family: "Montserrat"; font-weight: 700; font-size: 15px; color: #1a1a1a; margin: 0 0 14px; }
+ 
+.ed-quick-amounts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.ed-quick-btn { padding: 6px 14px; border-radius: 16px; border: 1.5px solid #ddd; background: white; font-family: "Montserrat"; font-weight: 700; font-size: 12px; color: #555; cursor: pointer; transition: all .2s ease; }
+.ed-quick-btn:hover    { border-color: #1c4e14; color: #1c4e14; }
+.ed-quick-btn.selected { background: #1c4e14; color: white; border-color: #1c4e14; }
+ 
+.ed-amount-input-wrap { display: flex; align-items: center; border: 1.5px solid #e0e0e0; border-radius: 12px; overflow: hidden; margin-bottom: 10px; transition: border .2s; }
+.ed-amount-input-wrap:focus-within { border-color: #1c4e14; }
+.ed-rupee        { padding: 0 12px; font-family: "MontserratBold"; font-size: 16px; color: #1c4e14; background: #f5f5f5; height: 44px; display: flex; align-items: center; border-right: 1.5px solid #e0e0e0; }
+.ed-amount-input { flex: 1; border: none; outline: none; padding: 0 12px; font-family: "Montserrat"; font-size: 14px; height: 44px; background: white; }
+ 
+.ed-msg-input { width: 100%; border: 1.5px solid #e0e0e0; border-radius: 12px; padding: 10px 12px; font-family: "Montserrat"; font-size: 13px; resize: none; outline: none; margin-bottom: 10px; transition: border .2s; box-sizing: border-box; line-height: 1.5; }
+.ed-msg-input:focus { border-color: #1c4e14; }
+ 
+.ed-anon-label { display: flex; align-items: center; gap: 8px; font-family: "Montserrat"; font-size: 13px; color: #555; cursor: pointer; margin-bottom: 12px; user-select: none; }
+.ed-anon-label input { accent-color: #1c4e14; width: 16px; height: 16px; cursor: pointer; }
+ 
+.ed-donate-error { font-family: "Montserrat"; font-size: 12px; color: #e74c3c; margin: 0 0 10px; }
+ 
+.ed-donate-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px; background: linear-gradient(90deg, #1c4e14, #3a7d2c);
+  color: white; border: none; border-radius: 16px;
+  font-family: "Montserrat"; font-weight: 700; font-size: 14px;
+  cursor: pointer; box-shadow: 0 4px 14px rgba(28,78,20,0.35);
+  transition: all .25s ease;
+}
+.ed-donate-btn:hover    { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(28,78,20,0.4); }
+.ed-donate-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+ 
+.ed-razorpay-note { font-family: "Montserrat"; font-size: 11px; color: #aaa; text-align: center; margin: 10px 0 0; line-height: 1.5; }
+ 
+.ed-completed-card { background: #e8f5e9; border-radius: 20px; padding: 24px; text-align: center; color: #2e7d32; }
+.ed-completed-card h3 { font-family: "Montserrat"; font-weight: 700; font-size: 16px; margin: 10px 0 6px; }
+.ed-completed-card p  { font-family: "Montserrat"; font-size: 13px; margin: 0; opacity: 0.8; }
+ 
+.spin { animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+ 
+/* ── SHARE + REFRESH ── */
+.ed-donations-header {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 14px;
+}
+.ed-donations-header .ed-donations-title { margin: 0; }
+ 
+.ed-donations-actions { display: flex; gap: 8px; align-items: center; }
+ 
+.ed-refresh-btn {
+  background: #f0f0f0; border: none; border-radius: 50%;
+  width: 30px; height: 30px; display: flex;
+  align-items: center; justify-content: center;
+  cursor: pointer; color: #888; transition: all .2s ease;
+}
+.ed-refresh-btn:hover    { background: #e0e0e0; color: #1c4e14; }
+.ed-refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+ 
+.ed-share-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 20px;
+  background: white; border: 1.5px solid #1c4e14;
+  color: #1c4e14; font-family: "Montserrat", sans-serif;
+  font-weight: 700; font-size: 12px;
+  cursor: pointer; transition: all .2s ease;
+}
+.ed-share-btn:hover { background: #1c4e14; color: white; }

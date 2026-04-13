@@ -1,19 +1,30 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Plus, X, ImagePlus, Send, Loader } from "lucide-react"
 import "../styles/createpostmodal.css"
 import defaultProfile from "../assets/images/default_profile.jpg"
 
-export default function CreatePostModal({ profileImage, onPostCreated }) {
+export default function CreatePostModal({ profileImage: propProfileImage, onPostCreated }) {
   const navigate      = useNavigate()
   const fileInputRef  = useRef(null)
 
-  const [open, setOpen]         = useState(false)
-  const [caption, setCaption]   = useState("")
-  const [files, setFiles]       = useState([])
-  const [posting, setPosting]   = useState(false)
-  const [postError, setPostError] = useState("")
+  const [open, setOpen]             = useState(false)
+  const [caption, setCaption]       = useState("")
+  const [files, setFiles]           = useState([])
+  const [posting, setPosting]       = useState(false)
+  const [postError, setPostError]   = useState("")
+  const [ownImage, setOwnImage]     = useState(null)
 
+  /* fetch own profile image if parent didn't pass one */
+  useEffect(() => {
+    if (propProfileImage) { setOwnImage(propProfileImage); return }
+    fetch("http://localhost:5000/api/users/profile", { credentials: "include" })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d?.user?.profile_image) setOwnImage(d.user.profile_image) })
+      .catch(() => {})
+  }, [propProfileImage])
+
+  const profileImage = ownImage || propProfileImage || defaultProfile
   const storedUsername = localStorage.getItem("username") || "Username"
 
   const handleFilePick = (e) => {

@@ -47,13 +47,12 @@ exports.setMilestones = async (req, res) => {
 
         /* verify ownership */
         const eventRes = await client.query(
-            `SELECT creator_id, milestones_set FROM events WHERE event_id = $1`, [event_id]
+            `SELECT creator_id FROM events WHERE event_id = $1`, [event_id]
         )
         if (eventRes.rows.length === 0) return res.status(404).json({ error: "Event not found" })
         if (eventRes.rows[0].creator_id !== creator_id) return res.status(403).json({ error: "Not your event" })
-        if (eventRes.rows[0].milestones_set) return res.status(400).json({ error: "Milestones already set for this event" })
 
-        /* delete any existing milestones (safety) */
+        /* always delete and re-insert so milestones can be set even after a failed attempt */
         await client.query(`DELETE FROM event_milestones WHERE event_id = $1`, [event_id])
 
         /* insert milestones */

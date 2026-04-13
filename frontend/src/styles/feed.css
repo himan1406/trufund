@@ -243,3 +243,65 @@ body { margin: 0; font-family: "Montserrat"; }
   font-size: 13px;
   color: #1c4e14;
 }
+
+/* ── DISCOVER STATE (empty feed) ── */
+.feed-discover {
+  background: white; border-radius: 20px;
+  padding: 28px 24px; text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  animation: fadeUp .3s ease both;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 12px;
+}
+
+.feed-discover-title {
+  font-family: "MontserratBold", sans-serif;
+  font-size: 16px; color: #1a1a1a; margin: 0;
+}
+
+.feed-discover-sub {
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px; color: #888;
+  max-width: 340px; line-height: 1.6; margin: 0;
+}
+
+.feed-discover-tags {
+  display: flex; flex-wrap: wrap;
+  gap: 8px; justify-content: center;
+  margin-top: 4px;
+}
+
+.feed-discover-tag {
+  display: flex; align-items: center; gap: 6px;
+  background: #f0f7ee; border-radius: 20px;
+  padding: 6px 14px; cursor: pointer;
+  transition: all .2s ease;
+}
+.feed-discover-tag:hover { background: #1c4e14; }
+.feed-discover-tag:hover .feed-hashtag-tag { color: white; }
+
+.feed-discover-count {
+  font-family: "Montserrat", sans-serif;
+  font-size: 10px; color: #888;
+}
+
+.feed-discover-explore {
+  margin-top: 8px; padding: 10px 24px;
+  background: linear-gradient(90deg, #1c4e14, #3a7d2c);
+  color: white; border: none; border-radius: 22px;
+  font-family: "Montserrat", sans-serif; font-weight: 700;
+  font-size: 13px; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(28,78,20,0.3);
+  transition: all .25s ease;
+}
+.feed-discover-explore:hover { transform: translateY(-2px); }
+
+/* ── HASHTAG COUNT IN RIGHT PANEL ── */
+.feed-hashtag-item {
+  display: flex; align-items: center;
+  justify-content: space-between;
+}
+.feed-hashtag-count {
+  font-family: "Montserrat", sans-serif;
+  font-size: 11px; color: #aaa;
+}

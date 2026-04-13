@@ -277,7 +277,7 @@ exports.deletePost = async (req, res) => {
 ========================= */
 async function getPostById(post_id, viewer_id) {
   const postResult = await pool.query(
-    `SELECT p.post_id, p.caption, p.like_count, p.created_at,
+    `SELECT p.post_id, p.caption, p.like_count, p.comment_count, p.created_at,
             u.user_id, u.username, u.profile_image
      FROM posts p
      JOIN users u ON p.user_id = u.user_id
@@ -306,11 +306,12 @@ async function getPostById(post_id, viewer_id) {
   )
 
   return {
-    post_id:    post.post_id,
-    caption:    post.caption,
-    like_count: post.like_count,
-    created_at: post.created_at,
-    liked:      likedResult.rows.length > 0,
+    post_id:       post.post_id,
+    caption:       post.caption,
+    like_count:    post.like_count,
+    comment_count: post.comment_count || 0,
+    created_at:    post.created_at,
+    liked:         likedResult.rows.length > 0,
     user: {
       user_id:       post.user_id,
       username:      post.username,
@@ -318,5 +319,116 @@ async function getPostById(post_id, viewer_id) {
     },
     media:    mediaResult.rows,
     hashtags: hashtagResult.rows.map(r => r.tag),
+  }
+}
+
+
+/* =========================
+   GET COMMENTS FOR A POST
+========================= */
+exports.getComments = async (req, res) => {
+  const post_id = parseInt(req.params.post_id)
+  try {
+    const result = await pool.query(
+      `SELECT c.comment_id, c.content, c.created_at,
+              u.user_id, u.username, u.profile_image
+       FROM post_comments c
+       JOIN users u ON c.user_id = u.user_id
+       WHERE c.post_id = $1
+       ORDER BY c.created_at ASC`,
+      [post_id]
+    )
+    res.json({ comments: result.rows })
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load comments" })
+  }
+}
+
+
+/* =========================
+   ADD COMMENT
+========================= */
+exports.addComment = async (req, res) => {
+  const user_id = req.user.user_id
+  const post_id = parseInt(req.params.post_id)
+  const { content } = req.body
+
+  if (!content?.trim()) return res.status(400).json({ error: "Comment cannot be empty" })
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO post_comments (post_id, user_id, content)
+       VALUES ($1, $2, $3) RETURNING comment_id, content, created_at`,
+      [post_id, user_id, content.trim()]
+    )
+
+    await pool.query(
+      `UPDATE posts SET comment_count = comment_count + 1 WHERE post_id = $1`, [post_id]
+    )
+
+    const userRes = await pool.query(
+      `SELECT username, profile_image FROM users WHERE user_id = $1`, [user_id]
+    )
+
+    res.status(201).json({
+      comment: {
+        ...result.rows[0],
+        user_id,
+        username:      userRes.rows[0].username,
+        profile_image: userRes.rows[0].profile_image || null,
+      }
+    })
+  } catch (err) {
+    res.status(500).json({ error: "Failed to add comment" })
+  }
+}
+
+
+/* =========================
+   DELETE COMMENT
+========================= */
+exports.deleteComment = async (req, res) => {
+  const user_id    = req.user.user_id
+  const comment_id = parseInt(req.params.comment_id)
+  try {
+    const check = await pool.query(
+      `SELECT user_id, post_id FROM post_comments WHERE comment_id = $1`, [comment_id]
+    )
+    if (check.rows.length === 0) return res.status(404).json({ error: "Comment not found" })
+    if (check.rows[0].user_id !== user_id) return res.status(403).json({ error: "Not your comment" })
+
+    await pool.query(`DELETE FROM post_comments WHERE comment_id = $1`, [comment_id])
+    await pool.query(
+      `UPDATE posts SET comment_count = GREATEST(comment_count - 1, 0) WHERE post_id = $1`,
+      [check.rows[0].post_id]
+    )
+    res.json({ message: "Comment deleted" })
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete comment" })
+  }
+}
+
+
+/* =========================
+   GET TRENDING HASHTAGS
+========================= */
+exports.getTrendingHashtags = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT tag, post_count FROM hashtags
+       WHERE post_count > 0
+       ORDER BY post_count DESC
+       LIMIT 10`
+    )
+    /* fallback to seeded tags if nothing posted yet */
+    if (result.rows.length === 0) {
+      const fallback = await pool.query(
+        `SELECT tag, post_count FROM hashtags ORDER BY hashtag_id ASC LIMIT 10`
+      )
+      return res.json({ hashtags: fallback.rows })
+    }
+    res.json({ hashtags: result.rows })
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load trending hashtags" })
   }
 }

@@ -2,178 +2,118 @@ const pool = require("../config/db")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 
+const isDev = process.env.NODE_ENV !== "production"
+
 /* =========================
-   SIGNUP CONTROLLER
+   SIGNUP
 ========================= */
+exports.signup = async (req, res) => {
+    try {
+        const { username, full_name, email, password } = req.body || {}
 
-exports.signup = async (req,res)=>{
+        if (!username || !full_name || !email || !password) {
+            return res.status(400).json({ error: "All fields are required" })
+        }
 
-console.log("\n===== SIGNUP REQUEST =====")
-console.log("Request Body:", req.body)
+        if (password.length < 6) {
+            return res.status(400).json({ error: "Password must be at least 6 characters" })
+        }
 
-try{
+        /* Check username / email uniqueness before hashing (cheaper) */
+        const taken = await pool.query(
+            `SELECT user_id FROM users WHERE username = $1 OR email = $2 LIMIT 1`,
+            [username, email]
+        )
+        if (taken.rows.length > 0) {
+            return res.status(400).json({ error: "Username or email already in use" })
+        }
 
-const {username,full_name,email,password} = req.body || {}
+        const hashedPassword = await bcrypt.hash(password, 10)
 
-console.log("Parsed fields:", {username,full_name,email,password})
+        const user = await pool.query(
+            `INSERT INTO users (username, full_name, email, password_hash)
+             VALUES ($1, $2, $3, $4)
+             RETURNING user_id, username, email`,
+            [username, full_name, email, hashedPassword]
+        )
 
-if(!username || !full_name || !email || !password){
+        if (isDev) console.log("SIGNUP: new user created", user.rows[0].username)
 
-console.log("VALIDATION FAILED - Missing fields")
-
-return res.status(400).json({
-error:"All fields are required"
-})
-
-}
-
-console.log("Hashing password...")
-
-const hashedPassword = await bcrypt.hash(password,10)
-
-console.log("Password hashed:", hashedPassword)
-
-/* INSERT USER */
-
-console.log("Inserting user into database...")
-
-const user = await pool.query(
-`INSERT INTO users
-(username,full_name,email,password_hash)
-VALUES($1,$2,$3,$4)
-RETURNING user_id,username,email`,
-[username,full_name,email,hashedPassword]
-)
-
-console.log("USER CREATED SUCCESSFULLY:", user.rows[0])
-
-res.json({
-message:"Signup successful",
-user:user.rows[0]
-})
-
-}catch(err){
-
-console.error("SIGNUP ERROR:", err)
-
-res.status(500).json({
-error:"Signup failed",
-details: err.message
-})
-
-}
-
+        res.status(201).json({ message: "Signup successful", user: user.rows[0] })
+    } catch (err) {
+        console.error("SIGNUP ERROR:", err.message)
+        res.status(500).json({ error: "Signup failed", details: isDev ? err.message : undefined })
+    }
 }
 
 
 /* =========================
-   LOGIN CONTROLLER
+   LOGIN
 ========================= */
+exports.login = async (req, res) => {
+    try {
+        const { email, password, remember } = req.body || {}
 
-exports.login = async (req,res)=>{
+        if (!email || !password) {
+            return res.status(400).json({ error: "Email and password required" })
+        }
 
-console.log("\n===== LOGIN REQUEST =====")
-console.log("Request Body:", req.body)
+        const userRes = await pool.query(
+            "SELECT * FROM users WHERE email = $1", [email]
+        )
 
-try{
+        /* Use constant-time comparison path to avoid user-enumeration timing attacks */
+        const user        = userRes.rows[0]
+        const dummyHash   = "$2b$10$invalidhashfortimingprotectiononly000000000000000000000"
+        const hashToCheck = user ? user.password_hash : dummyHash
 
-const {email,password,remember} = req.body || {}
+        const valid = await bcrypt.compare(password.trim(), hashToCheck)
 
-console.log("Parsed fields:", {email,password,remember})
+        if (!user || !valid) {
+            return res.status(401).json({ error: "Invalid email or password" })
+        }
 
-if(!email || !password){
+        const expiresIn = remember ? "30d" : "1h"
+        const maxAge    = remember ? 30 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000
 
-console.log("VALIDATION FAILED - Missing email or password")
+        const token = jwt.sign(
+            { user_id: user.user_id },
+            process.env.JWT_SECRET,
+            { expiresIn }
+        )
 
-return res.status(400).json({
-error:"Email and password required"
-})
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure:   process.env.NODE_ENV === "production",   // HTTPS only in prod
+            sameSite: "strict",                                // CSRF protection
+            maxAge,
+        })
 
+        if (isDev) console.log("LOGIN: success for", user.username)
+
+        res.json({
+            message: "Login successful",
+            user: {
+                id:       user.user_id,
+                username: user.username,
+                email:    user.email,
+            },
+        })
+    } catch (err) {
+        console.error("LOGIN ERROR:", err.message)
+        res.status(500).json({ error: "Login failed", details: isDev ? err.message : undefined })
+    }
 }
 
-console.log("LOGIN ATTEMPT:", email)
 
-/* CHECK USER */
-
-console.log("Searching user in database...")
-
-const user = await pool.query(
-"SELECT * FROM users WHERE email=$1",
-[email]
-)
-
-if(user.rows.length===0){
-
-console.log("USER NOT FOUND")
-
-return res.status(401).json({
-error:"User not found"
-})
-
-}
-
-console.log("USER FOUND:", user.rows[0].email)
-console.log("Stored hash:", user.rows[0].password_hash)
-
-/* PASSWORD CHECK */
-
-console.log("Comparing password with bcrypt...")
-
-const valid = await bcrypt.compare(
-password.trim(),
-user.rows[0].password_hash
-)
-
-console.log("Password match result:", valid)
-
-if(!valid){
-
-console.log("INVALID PASSWORD")
-
-return res.status(401).json({
-error:"Invalid password"
-})
-
-}
-
-/* CREATE TOKEN */
-
-console.log("Generating JWT token...")
-
-const token = jwt.sign(
-{user_id:user.rows[0].user_id},
-process.env.JWT_SECRET || "dev_secret",
-{expiresIn: remember ? "30d" : "1h"}
-)
-
-console.log("JWT TOKEN CREATED")
-
-/* SET COOKIE */
-
-res.cookie("token",token,{
-httpOnly:true
-})
-
-console.log("Cookie sent to client")
-
-res.json({
-message:"Login successful",
-user:{
-id:user.rows[0].user_id,
-username:user.rows[0].username,
-email:user.rows[0].email
-}
-})
-
-}catch(err){
-
-console.error("LOGIN ERROR:", err)
-
-res.status(500).json({
-error:"Login failed",
-details: err.message
-})
-
-}
-
+/* =========================
+   LOGOUT
+========================= */
+exports.logout = async (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure:   process.env.NODE_ENV === "production",
+        sameSite: "strict",
+    })
+    res.json({ message: "Logged out successfully" })
 }
