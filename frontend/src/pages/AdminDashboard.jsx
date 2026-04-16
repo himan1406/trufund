@@ -11,7 +11,9 @@ import Sidebar from "../components/Sidebar"
 import Topbar from "../components/Topbar"
 import defaultProfile from "../assets/images/default_profile.jpg"
 
-const API = "http://localhost:5000"
+import API_BASE_URL from "../utils/api"
+
+const API = API_BASE_URL
 
 export default function AdminDashboard() {
     const navigate = useNavigate()

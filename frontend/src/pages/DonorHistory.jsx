@@ -15,6 +15,8 @@ import Sidebar from "../components/Sidebar"
 import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
 
+import API_BASE_URL from "../utils/api"
+
 export default function DonorHistory() {
 
   const [menuOpen, setMenuOpen] = useState(false)
@@ -28,7 +30,7 @@ export default function DonorHistory() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/users/profile", {
+        const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
           credentials: "include",
         })
         if (!res.ok) {

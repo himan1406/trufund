@@ -1,0 +1,25 @@
+services:
+  # Database
+  - type: pgo
+    name: trufund-db
+    plan: free # Can upgrade later
+    databaseName: trufund
+    user: postgres
+
+  # Node Backend Server
+  - type: web
+    name: trufund-api
+    plan: free
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: trufund-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: "https://trufund.vercel.app" # REPLACE THIS LATER
+      # Note: RAZORPAY_KEY_ID & RAZORPAY_KEY_SECRET must be added manually in Render Dashboard

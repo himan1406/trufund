@@ -22,10 +22,16 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 /* ── MIDDLEWARE ── */
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: allowedOrigins,
   credentials: true,
 }))
+
 app.use(express.json())
 app.use(cookieParser())
 

@@ -12,6 +12,8 @@ import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
 import defaultProfile from "../assets/images/default_profile.jpg"
 
+import API_BASE_URL from "../utils/api"
+
 export default function Following() {
   const navigate = useNavigate()
   const [following, setFollowing] = useState([])
@@ -23,13 +25,13 @@ export default function Following() {
   useEffect(() => {
     const fetch_ = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/users/profile", { credentials: "include" })
+        const res = await fetch(`${API_BASE_URL}/api/users/profile`, { credentials: "include" })
         if (!res.ok) { if (res.status === 401) { navigate("/login"); return } }
         const data = await res.json()
         setProfileImage(data?.user?.profile_image || null)
 
         /* get list of followed users */
-        const followRes = await fetch("http://localhost:5000/api/users/following", { credentials: "include" })
+        const followRes = await fetch(`${API_BASE_URL}/api/users/following`, { credentials: "include" })
         if (followRes.ok) {
           const followData = await followRes.json()
           setFollowing(followData.following || [])
@@ -46,7 +48,7 @@ export default function Following() {
   const handleUnfollow = async (username) => {
     setUnfollowing(prev => ({ ...prev, [username]: true }))
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${username}/follow`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${username}/follow`, {
         method: "DELETE", credentials: "include"
       })
       if (res.ok) {

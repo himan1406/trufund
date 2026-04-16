@@ -11,6 +11,7 @@ import Sidebar from "../components/Sidebar"
 import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
 import { PostCard } from "./HashtagFeed"
+import API_BASE_URL from "../utils/api"
 import defaultProfile from "../assets/images/default_profile.jpg"
 
 export default function Feed() {
@@ -36,9 +37,9 @@ export default function Feed() {
     const fetchAll = async () => {
       try {
         const [profileRes, feedRes, hashRes] = await Promise.all([
-          fetch("http://localhost:5000/api/users/profile",           { credentials: "include" }),
-          fetch("http://localhost:5000/api/posts/feed",              { credentials: "include" }),
-          fetch("http://localhost:5000/api/posts/trending/hashtags", { credentials: "include" }),
+          fetch(`${API_BASE_URL}/api/users/profile`,           { credentials: "include" }),
+          fetch(`${API_BASE_URL}/api/posts/feed`,              { credentials: "include" }),
+          fetch(`${API_BASE_URL}/api/posts/trending/hashtags`, { credentials: "include" }),
         ])
         if (!profileRes.ok) { if (profileRes.status === 401) { navigate("/login"); return } }
 

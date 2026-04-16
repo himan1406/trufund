@@ -15,6 +15,8 @@ import VerifiedBadge from "../components/VerifiedBadge"
 
 const CATEGORIES = ["Fundraiser", "Charity", "Education", "Healthcare", "Food Drive", "Orphanage", "Disaster Relief", "Community", "Other"]
 
+import API_BASE_URL from "../utils/api"
+
 export default function CreatorStudio() {
     const navigate = useNavigate()
 
@@ -61,9 +63,9 @@ export default function CreatorStudio() {
         const fetchAll = async () => {
             try {
                 const [profileRes, eventsRes, verifRes] = await Promise.all([
-                    fetch("http://localhost:5000/api/users/profile",              { credentials: "include" }),
-                    fetch("http://localhost:5000/api/events/mine",                { credentials: "include" }),
-                    fetch("http://localhost:5000/api/users/verification/status",  { credentials: "include" }),
+                    fetch(`${API_BASE_URL}/api/users/profile`,              { credentials: "include" }),
+                    fetch(`${API_BASE_URL}/api/events/mine`,                { credentials: "include" }),
+                    fetch(`${API_BASE_URL}/api/users/verification/status`,  { credentials: "include" }),
                 ])
                 if (!profileRes.ok) { if (profileRes.status === 401) { navigate("/login"); return } }
                 const profileData = await profileRes.json()

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import "../styles/loading.css"
 
+import API_BASE_URL from "../utils/api"
+
 export default function LoadingScreen(){
 
 const navigate = useNavigate()
@@ -17,7 +19,7 @@ const verifyUser = async () => {
 
 try{
 
-const res = await fetch("http://localhost:5000/api/auth/me",{
+const res = await fetch(`${API_BASE_URL}/api/auth/me`,{
 credentials:"include"
 })
 

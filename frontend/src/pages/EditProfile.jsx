@@ -16,6 +16,7 @@ import {
 
 import Sidebar from "../components/Sidebar"
 
+import API_BASE_URL from "../utils/api"
 import defaultProfile from "../assets/images/default_profile.jpg"
 import Topbar from "../components/Topbar"
 
@@ -65,7 +66,7 @@ export default function EditProfile() {
   useEffect(() => {
     const fetch_ = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/users/profile", {
+        const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
           credentials: "include"
         })
         if (!res.ok) { if (res.status === 401) { navigate("/login"); return } }
@@ -102,7 +103,7 @@ export default function EditProfile() {
       const formData = new FormData()
       formData.append("profile_image", avatarFile)
 
-      const res = await fetch("http://localhost:5000/api/users/profile/picture", {
+      const res = await fetch(`${API_BASE_URL}/api/users/profile/picture`, {
         method: "POST",
         credentials: "include",
         body: formData

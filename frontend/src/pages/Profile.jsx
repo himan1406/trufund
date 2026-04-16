@@ -11,6 +11,7 @@ import Topbar from "../components/Topbar"
 import VerifiedBadge from "../components/VerifiedBadge"
 import CreatePostModal from "../components/CreatePostModal"
 import { PostCard } from "../pages/HashtagFeed"
+import API_BASE_URL from "../utils/api"
 import defaultProfile from "../assets/images/default_profile.jpg"
 import { useNavigate } from "react-router-dom"
 
@@ -29,9 +30,9 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const [profileRes, eventsRes, hashRes] = await Promise.all([
-          fetch("http://localhost:5000/api/users/profile", { credentials: "include" }),
-          fetch("http://localhost:5000/api/events?status=active&limit=5", { credentials: "include" }),
-          fetch("http://localhost:5000/api/posts/trending/hashtags", { credentials: "include" }),
+          fetch(`${API_BASE_URL}/api/users/profile`, { credentials: "include" }),
+          fetch(`${API_BASE_URL}/api/events?status=active&limit=5`, { credentials: "include" }),
+          fetch(`${API_BASE_URL}/api/posts/trending/hashtags`, { credentials: "include" }),
         ])
         if (!profileRes.ok) { if (profileRes.status === 401) { navigate("/login"); return } throw new Error() }
         const data = await profileRes.json()

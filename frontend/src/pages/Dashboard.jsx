@@ -6,6 +6,8 @@ import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
 import Sidebar from "../components/Sidebar"
 
+import API_BASE_URL from "../utils/api"
+
 export default function Dashboard(){
 
 const [category, setCategory]     = useState("Education")
@@ -19,10 +21,10 @@ useEffect(() => {
   const fetchAll = async () => {
     try {
       const [eventsRes, followRes, hashRes, profileRes] = await Promise.all([
-        fetch("http://localhost:5000/api/events?status=active&limit=5", { credentials: "include" }),
-        fetch("http://localhost:5000/api/users/following", { credentials: "include" }),
-        fetch("http://localhost:5000/api/posts/trending/hashtags", { credentials: "include" }),
-        fetch("http://localhost:5000/api/users/profile", { credentials: "include" }),
+        fetch(`${API_BASE_URL}/api/events?status=active&limit=5`, { credentials: "include" }),
+        fetch(`${API_BASE_URL}/api/users/following`, { credentials: "include" }),
+        fetch(`${API_BASE_URL}/api/posts/trending/hashtags`, { credentials: "include" }),
+        fetch(`${API_BASE_URL}/api/users/profile`, { credentials: "include" }),
       ])
       if (eventsRes.ok)  { const d = await eventsRes.json();  setTopEvents(d.events || []) }
       if (followRes.ok)  { const d = await followRes.json();  setFollowing(d.following || []) }

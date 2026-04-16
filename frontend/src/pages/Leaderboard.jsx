@@ -12,7 +12,9 @@ import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
 import defaultProfile from "../assets/images/default_profile.jpg"
 
-const pool_url = "http://localhost:5000"
+import API_BASE_URL from "../utils/api"
+
+const pool_url = API_BASE_URL
 
 export default function Leaderboard() {
   const navigate = useNavigate()
@@ -28,7 +30,7 @@ export default function Leaderboard() {
     const fetchAll = async () => {
       try {
         const [profileRes, totalRes, singleRes] = await Promise.all([
-          fetch(`${pool_url}/api/users/profile`,          { credentials: "include" }),
+          fetch(`${API_BASE_URL}/api/users/profile`,          { credentials: "include" }),
           fetch(`${pool_url}/api/users/leaderboard/total`,  { credentials: "include" }),
           fetch(`${pool_url}/api/users/leaderboard/single`, { credentials: "include" }),
         ])

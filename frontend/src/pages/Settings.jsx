@@ -4,6 +4,8 @@ import Sidebar from "../components/Sidebar"
 import Topbar from "../components/Topbar"
 import { Monitor, Moon, Sun, Shield } from "lucide-react"
 
+import API_BASE_URL from "../utils/api"
+
 export default function Settings() {
     const [profileImage, setProfileImage] = useState(null)
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light")
@@ -12,7 +14,7 @@ export default function Settings() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await fetch("http://localhost:5000/api/users/profile", { credentials: "include" })
+                const res = await fetch(`${API_BASE_URL}/api/users/profile`, { credentials: "include" })
                 if (res.ok) {
                     const data = await res.json()
                     setProfileImage(data?.user?.profile_image || null)

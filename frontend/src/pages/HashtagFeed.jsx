@@ -14,6 +14,8 @@ import CreatePostModal from "../components/CreatePostModal"
 import defaultProfile from "../assets/images/default_profile.jpg"
 import VerifiedBadge from "../components/VerifiedBadge"
 
+import API_BASE_URL from "../utils/api"
+
 export default function HashtagFeed() {
   const { tag } = useParams()
   const navigate = useNavigate()
@@ -30,8 +32,8 @@ export default function HashtagFeed() {
       setError("")
       try {
         const [profileRes, feedRes] = await Promise.all([
-          fetch("http://localhost:5000/api/users/profile", { credentials: "include" }),
-          fetch(`http://localhost:5000/api/posts/hashtag/${tag}`, { credentials: "include" }),
+          fetch(`${API_BASE_URL}/api/users/profile`, { credentials: "include" }),
+          fetch(`${API_BASE_URL}/api/posts/hashtag/${tag}`, { credentials: "include" }),
         ])
         if (!profileRes.ok) {
           if (profileRes.status === 401) { navigate("/login"); return }

@@ -13,6 +13,8 @@ import defaultProfile from "../assets/images/default_profile.jpg"
 
 const CATEGORIES = ["All", "Fundraiser", "Charity", "Education", "Healthcare", "Food Drive", "Orphanage", "Disaster Relief", "Community", "Other"]
 
+import API_BASE_URL from "../utils/api"
+
 export default function EventFeed() {
     const navigate = useNavigate()
 
@@ -26,8 +28,8 @@ export default function EventFeed() {
             setLoading(true)
             try {
                 const [profileRes, eventsRes] = await Promise.all([
-                    fetch("http://localhost:5000/api/users/profile", { credentials: "include" }),
-                    fetch(`http://localhost:5000/api/events?status=active${category !== "All" ? `&category=${category}` : ""}`, { credentials: "include" }),
+                    fetch(`${API_BASE_URL}/api/users/profile`, { credentials: "include" }),
+                    fetch(`${API_BASE_URL}/api/events?status=active${category !== "All" ? `&category=${category}` : ""}`, { credentials: "include" }),
                 ])
                 if (!profileRes.ok) { if (profileRes.status === 401) { navigate("/login"); return } }
                 const profileData = await profileRes.json()

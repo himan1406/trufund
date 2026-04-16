@@ -26,6 +26,8 @@ function loadRazorpay() {
     })
 }
 
+import API_BASE_URL from "../utils/api"
+
 export default function EventDetail() {
     const { id } = useParams()
     const [searchParams] = useSearchParams()
@@ -69,9 +71,9 @@ export default function EventDetail() {
         const fetchAll = async () => {
             try {
                 const [profileRes, eventRes, milestonesRes] = await Promise.all([
-                    fetch("http://localhost:5000/api/users/profile", { credentials: "include" }),
-                    fetch(`http://localhost:5000/api/events/${id}`, { credentials: "include" }),
-                    fetch(`http://localhost:5000/api/escrow/events/${id}/milestones`, { credentials: "include" }),
+                    fetch(`${API_BASE_URL}/api/users/profile`, { credentials: "include" }),
+                    fetch(`${API_BASE_URL}/api/events/${id}`, { credentials: "include" }),
+                    fetch(`${API_BASE_URL}/api/escrow/events/${id}/milestones`, { credentials: "include" }),
                 ])
                 if (!profileRes.ok) { if (profileRes.status === 401) { navigate("/login"); return } }
                 const profileData = await profileRes.json()
