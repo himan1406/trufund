@@ -84,8 +84,8 @@ exports.login = async (req, res) => {
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure:   process.env.NODE_ENV === "production",   // HTTPS only in prod
-            sameSite: "strict",                                // CSRF protection
+            secure:   true, // Must be true for sameSite: 'none'
+            sameSite: "none", // Required for cross-site (Vercel -> Render)
             maxAge,
         })
 
@@ -100,8 +100,12 @@ exports.login = async (req, res) => {
             },
         })
     } catch (err) {
-        console.error("LOGIN ERROR:", err.message)
-        res.status(500).json({ error: "Login failed", details: isDev ? err.message : undefined })
+        console.error("LOGIN ERROR:", err)
+        res.status(500).json({ 
+            error: "Login failed", 
+            details: err.message, // Temporarily show details to debug production issues
+            stack: isDev ? err.stack : undefined 
+        })
     }
 }
 
@@ -112,8 +116,8 @@ exports.login = async (req, res) => {
 exports.logout = async (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
-        secure:   process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        secure:   true,
+        sameSite: "none",
     })
     res.json({ message: "Logged out successfully" })
 }
