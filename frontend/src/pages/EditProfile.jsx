@@ -18,7 +18,7 @@ import Sidebar from "../components/Sidebar"
 
 import API_BASE_URL from "../utils/api"
 import defaultProfile from "../assets/images/default_profile.jpg"
-import Topbar from "../components/Topbar"
+import Topbar from "../components/TopBar"
 
 export default function EditProfile() {
 

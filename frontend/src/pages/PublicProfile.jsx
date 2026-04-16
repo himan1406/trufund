@@ -8,7 +8,7 @@ import {
 
 import Sidebar from "../components/Sidebar"
 
-import Topbar from "../components/Topbar"
+import Topbar from "../components/TopBar"
 import VerifiedBadge from "../components/VerifiedBadge"
 import CreatePostModal from "../components/CreatePostModal"
 import { PostCard } from "../pages/HashtagFeed"

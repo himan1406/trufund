@@ -8,7 +8,7 @@ import {
 
 import Sidebar from "../components/Sidebar"
 
-import Topbar from "../components/Topbar"
+import Topbar from "../components/TopBar"
 import defaultProfile from "../assets/images/default_profile.jpg"
 
 import API_BASE_URL from "../utils/api"

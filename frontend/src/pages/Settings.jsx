@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import "../styles/settings.css"
 import Sidebar from "../components/Sidebar"
-import Topbar from "../components/Topbar"
+import Topbar from "../components/TopBar"
 import { Monitor, Moon, Sun, Shield } from "lucide-react"
 
 import API_BASE_URL from "../utils/api"

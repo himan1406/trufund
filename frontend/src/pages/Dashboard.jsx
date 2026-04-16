@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import "../styles/dashboard.css"
 
-import Topbar from "../components/Topbar"
+import Topbar from "../components/TopBar"
 import CreatePostModal from "../components/CreatePostModal"
 import Sidebar from "../components/Sidebar"
 
