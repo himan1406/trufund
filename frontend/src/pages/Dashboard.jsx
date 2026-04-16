@@ -2,20 +2,9 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import "../styles/dashboard.css"
 
-import {
-LayoutDashboard,
-ZodiacSagittarius,
-Trophy,
-History,
-Blend,
-KeyboardMusic,
-Users,
-Settings,
-MessageCircleQuestionMark,
-} from "lucide-react"
-
 import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
+import Sidebar from "../components/Sidebar"
 
 export default function Dashboard(){
 
@@ -23,19 +12,22 @@ const [category, setCategory]     = useState("Education")
 const [topEvents, setTopEvents]   = useState([])
 const [following, setFollowing]   = useState([])
 const [trendingTags, setTrending] = useState([])
+const [profileImage, setProfileImage] = useState(null)
 const navigate = useNavigate()
 
 useEffect(() => {
   const fetchAll = async () => {
     try {
-      const [eventsRes, followRes, hashRes] = await Promise.all([
+      const [eventsRes, followRes, hashRes, profileRes] = await Promise.all([
         fetch("http://localhost:5000/api/events?status=active&limit=5", { credentials: "include" }),
         fetch("http://localhost:5000/api/users/following", { credentials: "include" }),
         fetch("http://localhost:5000/api/posts/trending/hashtags", { credentials: "include" }),
+        fetch("http://localhost:5000/api/users/profile", { credentials: "include" }),
       ])
       if (eventsRes.ok)  { const d = await eventsRes.json();  setTopEvents(d.events || []) }
       if (followRes.ok)  { const d = await followRes.json();  setFollowing(d.following || []) }
       if (hashRes.ok)    { const d = await hashRes.json();    setTrending(d.hashtags || []) }
+      if (profileRes.ok) { const d = await profileRes.json(); setProfileImage(d.user?.profile_image || null) }
     } catch (err) { console.error(err) }
   }
   fetchAll()
@@ -50,28 +42,7 @@ return(
 <div className="brand">TruFund</div>
 
 {/* SIDEBAR */}
-
-<div className="sidebar">
-
-  <div className="nav">
-    <div className="nav-item"><LayoutDashboard className="nav-icon"/>Dashboard</div>
-    <div className="nav-item"><ZodiacSagittarius className="nav-icon"/>Explore</div>
-    <div className="nav-item"><Trophy className="nav-icon"/>Leaderboard</div>
-    <div className="nav-item" onClick={() => navigate("/donor-history")}>
-        <History className="nav-icon" />Donor History
-    </div>
-    <div className="nav-item" onClick={() => navigate("/following")}><Blend className="nav-icon"/>Following</div>
-    <div className="nav-item"><KeyboardMusic className="nav-icon"/>Creator Studio</div>
-  </div>
-
-  <div className="support">
-    <p>Support</p>
-    <div className="nav-item"><Users className="nav-icon"/>Community</div>
-    <div className="nav-item"><Settings className="nav-icon"/>Settings</div>
-    <div className="nav-item"><MessageCircleQuestionMark className="nav-icon"/>Help & Support</div>
-  </div>
-
-</div>
+<Sidebar activePage="dashboard" />
 
 
 {/* MAIN DASHBOARD CARD */}
@@ -80,7 +51,7 @@ return(
 
   {/* TOPBAR */}
 
-  <Topbar title="Dashboard" />
+  <Topbar title="Dashboard" profileImage={profileImage} />
 
 
   {/* BODY */}

@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef } from "react"
+import React from "react"
 import { useNavigate } from "react-router-dom"
 import "../styles/creatorstudio.css"
 
 import {
-    LayoutDashboard, ZodiacSagittarius, Trophy, History,
-    Blend, KeyboardMusic, Users, Settings, MessageCircleQuestionMark,
-    Plus, ImagePlus, X, Trash2, Calendar, Target, TrendingUp, Eye,
+    Plus, ImagePlus, X, Trash2, Calendar, Target, TrendingUp, Eye, BadgeCheck, FileText, CheckCircle, Clock, AlertCircle, KeyboardMusic,
 } from "lucide-react"
+
+import Sidebar from "../components/Sidebar"
 
 import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
+import VerifiedBadge from "../components/VerifiedBadge"
 
 const CATEGORIES = ["Fundraiser", "Charity", "Education", "Healthcare", "Food Drive", "Orphanage", "Disaster Relief", "Community", "Other"]
 
@@ -19,7 +21,21 @@ export default function CreatorStudio() {
     const [myEvents, setMyEvents] = useState([])
     const [loading, setLoading] = useState(true)
     const [profileImage, setProfileImage] = useState(null)
-    const [showForm, setShowForm] = useState(false)
+    const [showForm, setShowForm]         = useState(false)
+    const [showVerifForm, setShowVerifForm] = useState(false)
+    const [verifStatus, setVerifStatus]   = useState(null)  /* null | {is_verified_org, verification_status, application} */
+    const [isVerifiedOrg, setIsVerifiedOrg] = useState(false)
+    const [hasBank, setHasBank] = useState(false)
+
+    /* verification form state */
+    const [verifOrgName, setVerifOrgName]   = useState("")
+    const [verifDesc, setVerifDesc]         = useState("")
+    const [verifWebsite, setVerifWebsite]   = useState("")
+    const [verifFiles, setVerifFiles]       = useState([])
+    const [verifSubmitting, setVerifSubmitting] = useState(false)
+    const [verifError, setVerifError]       = useState("")
+    const [verifSuccess, setVerifSuccess]   = useState("")
+    const verifFileRef = React.useRef(null)
 
     /* form state */
     const [title, setTitle] = useState("")
@@ -44,16 +60,23 @@ export default function CreatorStudio() {
     useEffect(() => {
         const fetchAll = async () => {
             try {
-                const [profileRes, eventsRes] = await Promise.all([
-                    fetch("http://localhost:5000/api/users/profile", { credentials: "include" }),
-                    fetch("http://localhost:5000/api/events/mine", { credentials: "include" }),
+                const [profileRes, eventsRes, verifRes] = await Promise.all([
+                    fetch("http://localhost:5000/api/users/profile",              { credentials: "include" }),
+                    fetch("http://localhost:5000/api/events/mine",                { credentials: "include" }),
+                    fetch("http://localhost:5000/api/users/verification/status",  { credentials: "include" }),
                 ])
                 if (!profileRes.ok) { if (profileRes.status === 401) { navigate("/login"); return } }
                 const profileData = await profileRes.json()
                 setProfileImage(profileData?.user?.profile_image || null)
+                setHasBank(!!profileData?.user?.bank_account_num)
                 if (eventsRes.ok) {
                     const eventsData = await eventsRes.json()
                     setMyEvents(eventsData.events || [])
+                }
+                if (verifRes.ok) {
+                    const vd = await verifRes.json()
+                    setVerifStatus(vd)
+                    setIsVerifiedOrg(vd.is_verified_org || false)
                 }
             } catch (err) { console.error(err) }
             finally { setLoading(false) }
@@ -128,6 +151,39 @@ export default function CreatorStudio() {
         finally { setSubmitting(false) }
     }
 
+    const handleVerifFilePick = (e) => {
+        const picked = Array.from(e.target.files)
+        if (!picked.length) return
+        setVerifFiles(prev => [...prev, ...picked.map(f => ({
+            file: f,
+            preview: f.type.startsWith("image") ? URL.createObjectURL(f) : null,
+            name: f.name,
+        }))].slice(0, 10))
+        e.target.value = ""
+    }
+
+    const handleSubmitVerification = async (e) => {
+        e.preventDefault()
+        if (!verifOrgName.trim()) { setVerifError("Organisation name is required"); return }
+        setVerifSubmitting(true); setVerifError("")
+        try {
+            const formData = new FormData()
+            formData.append("org_name", verifOrgName.trim())
+            formData.append("org_description", verifDesc.trim())
+            formData.append("website_url", verifWebsite.trim())
+            verifFiles.forEach(f => formData.append("documents", f.file))
+            const res  = await fetch("http://localhost:5000/api/users/verification/apply", {
+                method: "POST", credentials: "include", body: formData
+            })
+            const data = await res.json()
+            if (!res.ok) { setVerifError(data.error || "Failed to submit"); return }
+            setVerifSuccess(data.message)
+            setShowVerifForm(false)
+            setVerifStatus(prev => ({ ...prev, verification_status: "pending" }))
+        } catch { setVerifError("Server error. Try again.") }
+        finally { setVerifSubmitting(false) }
+    }
+
     const resetForm = () => {
         setTitle(""); setDescription(""); setCategory("Fundraiser")
         setGoalAmount(""); setStartDate(""); setEndDate("")
@@ -154,22 +210,7 @@ export default function CreatorStudio() {
             <div className="background"></div>
             <div className="brand">TruFund</div>
 
-            <div className="sidebar">
-                <div className="nav">
-                    <div className="nav-item" onClick={() => navigate("/dashboard")}><LayoutDashboard className="nav-icon" />Dashboard</div>
-                    <div className="nav-item"><ZodiacSagittarius className="nav-icon" />Explore</div>
-                    <div className="nav-item"><Trophy className="nav-icon" />Leaderboard</div>
-                    <div className="nav-item" onClick={() => navigate("/donor-history")}><History className="nav-icon" />Donor History</div>
-                    <div className="nav-item" onClick={() => navigate("/following")}><Blend className="nav-icon" />Following</div>
-                    <div className="nav-item cs-active"><KeyboardMusic className="nav-icon" />Creator Studio</div>
-                </div>
-                <div className="support">
-                    <p>Support</p>
-                    <div className="nav-item"><Users className="nav-icon" />Community</div>
-                    <div className="nav-item"><Settings className="nav-icon" />Settings</div>
-                    <div className="nav-item"><MessageCircleQuestionMark className="nav-icon" />Help & Support</div>
-                </div>
-            </div>
+            <Sidebar activePage="creator" />
 
             <div className="dashboard-card">
                 <Topbar title="Creator Studio" profileImage={profileImage} />
@@ -182,7 +223,18 @@ export default function CreatorStudio() {
                             <h2 className="cs-title">Your Events</h2>
                             <p className="cs-subtitle">{myEvents.length} event{myEvents.length !== 1 ? "s" : ""} created</p>
                         </div>
-                        <button className="cs-create-btn" onClick={() => setShowForm(true)}>
+                        <button 
+                            className="cs-create-btn" 
+                            onClick={() => {
+                                if (!hasBank) {
+                                    if (window.confirm("You must link a bank account before creating an event. Do you want to go to Payout Settings now?")) {
+                                        navigate("/edit-profile");
+                                    }
+                                } else {
+                                    setShowForm(true)
+                                }
+                            }}
+                        >
                             <Plus size={16} /> Create Event
                         </button>
                     </div>
@@ -328,7 +380,18 @@ export default function CreatorStudio() {
                             <KeyboardMusic size={48} strokeWidth={1.2} />
                             <h3>No events yet</h3>
                             <p>Create your first fundraiser or charity event to start collecting donations.</p>
-                            <button className="cs-create-btn" onClick={() => setShowForm(true)}>
+                            <button 
+                                className="cs-create-btn" 
+                                onClick={() => {
+                                    if (!hasBank) {
+                                        if (window.confirm("You must link a bank account before creating an event. Do you want to go to Payout Settings now?")) {
+                                            navigate("/edit-profile");
+                                        }
+                                    } else {
+                                        setShowForm(true)
+                                    }
+                                }}
+                            >
                                 <Plus size={16} /> Create Your First Event
                             </button>
                         </div>
@@ -382,6 +445,99 @@ export default function CreatorStudio() {
 
                                 </div>
                             ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* VERIFICATION SECTION */}
+                <div className="cs-verif-section">
+                    <div className="cs-verif-header-row">
+                        <div className="cs-verif-header-left">
+                            <BadgeCheck size={20} className="cs-verif-icon" />
+                            <div>
+                                <h3 className="cs-verif-title">Organisation Verification</h3>
+                                <p className="cs-verif-sub">Get a verified badge on your profile and events</p>
+                            </div>
+                        </div>
+
+                        {isVerifiedOrg ? (
+                            <div className="cs-verif-status-badge approved">
+                                <CheckCircle size={14} />
+                                Verified Organisation
+                            </div>
+                        ) : verifStatus?.verification_status === "pending" ? (
+                            <div className="cs-verif-status-badge pending">
+                                <Clock size={14} />
+                                Application Under Review
+                            </div>
+                        ) : verifStatus?.verification_status === "rejected" ? (
+                            <div className="cs-verif-status-badge rejected">
+                                <AlertCircle size={14} />
+                                Application Not Approved
+                                {verifStatus?.application?.admin_note && (
+                                    <span className="cs-verif-note">Reason: {verifStatus.application.admin_note}</span>
+                                )}
+                            </div>
+                        ) : (
+                            <button className="cs-create-btn" onClick={() => setShowVerifForm(true)}>
+                                <BadgeCheck size={15} /> Apply for Verification
+                            </button>
+                        )}
+                    </div>
+
+                    {/* VERIFICATION FORM OVERLAY */}
+                    {showVerifForm && (
+                        <div className="cs-form-overlay">
+                            <div className="cs-form-card">
+                                <div className="cs-form-header">
+                                    <h3>Apply for Verified Status</h3>
+                                    <button className="cs-form-close" onClick={() => setShowVerifForm(false)}><X size={18} /></button>
+                                </div>
+                                <form className="cs-form" onSubmit={handleSubmitVerification}>
+                                    <div className="cs-form-grid">
+                                        <div className="cs-field cs-field-full">
+                                            <label>Organisation Name *</label>
+                                            <input type="text" placeholder="e.g. GreenRoots Foundation" value={verifOrgName} onChange={e => setVerifOrgName(e.target.value)} />
+                                        </div>
+                                        <div className="cs-field cs-field-full">
+                                            <label>About Your Organisation</label>
+                                            <textarea placeholder="Describe your mission, what you do, and why donors should trust you..." value={verifDesc} onChange={e => setVerifDesc(e.target.value)} rows={4} />
+                                        </div>
+                                        <div className="cs-field cs-field-full">
+                                            <label>Website / Social Link (optional)</label>
+                                            <input type="url" placeholder="https://yourorg.com" value={verifWebsite} onChange={e => setVerifWebsite(e.target.value)} />
+                                        </div>
+                                    </div>
+                                    <div className="cs-media-section">
+                                        <label>Supporting Documents (registration certificate, photos, etc.)</label>
+                                        <div className="cs-media-row">
+                                            {verifFiles.map((f, i) => (
+                                                <div key={i} className="cs-preview-wrap">
+                                                    {f.preview
+                                                        ? <img src={f.preview} alt={f.name} className="cs-preview" />
+                                                        : <div className="cs-event-cover-placeholder" style={{fontSize:11,padding:8}}>📄 {f.name.slice(0,12)}</div>
+                                                    }
+                                                    <button type="button" className="cs-preview-remove" onClick={() => setVerifFiles(prev => prev.filter((_,idx) => idx !== i))}><X size={11} /></button>
+                                                </div>
+                                            ))}
+                                            {verifFiles.length < 10 && (
+                                                <button type="button" className="cs-add-media" onClick={() => verifFileRef.current.click()}>
+                                                    <FileText size={22} /><span>Add Docs</span>
+                                                </button>
+                                            )}
+                                        </div>
+                                        <input ref={verifFileRef} type="file" accept="image/jpeg,image/png,image/webp,application/pdf" multiple style={{display:"none"}} onChange={handleVerifFilePick} />
+                                    </div>
+                                    {verifError   && <p className="cs-form-error">{verifError}</p>}
+                                    {verifSuccess  && <p style={{color:"#2e7d32",fontFamily:"Montserrat",fontSize:13}}>{verifSuccess}</p>}
+                                    <div className="cs-form-actions">
+                                        <button type="button" className="cs-btn-ghost" onClick={() => setShowVerifForm(false)}>Cancel</button>
+                                        <button type="submit" className="cs-btn-primary" disabled={verifSubmitting}>
+                                            {verifSubmitting ? "Submitting..." : "Submit Application"}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     )}
                 </div>

@@ -43,7 +43,7 @@ body {
 
 .brand {
     position: absolute;
-    top: 52px;
+    top: 48px;
     left: 50px;
     font-family: "PoppinsExtraBold";
     font-size: 44px;
@@ -106,7 +106,7 @@ body {
     bottom: 35px;
     background: #f3f3f3;
     border-radius: 32px;
-    padding: 35px 45px;
+    padding: 45px 45px;
     display: flex;
     flex-direction: column;
     z-index: 1;
@@ -445,6 +445,62 @@ body {
     background: #e0e0e0;
 }
 
+/* PAYOUT DESTINATION */
+.ad-payout-dest {
+    background: #f0f7ee;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid #c8e6c9;
+}
+
+.ad-payout-dest h4 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #1c4e14;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.ad-bank-card {
+    background: white;
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.ad-bank-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.ad-bank-label {
+    color: #888;
+    font-weight: 500;
+}
+
+.ad-bank-val {
+    color: #1a1a1a;
+    font-family: "MontserratBold", sans-serif;
+}
+
+.ad-bank-missing {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #b45309;
+    background: #fff3cd;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
 /* ACTIONS */
 .ad-actions {
     display: flex;
@@ -533,3 +589,54 @@ body {
     cursor: not-allowed;
     transform: none;
 }
+/* ── TABS ── */
+.ad-tabs {
+  display: flex;
+  gap: 8px;
+  background: #e9e9e9;
+  padding: 5px;
+  border-radius: 16px;
+}
+
+.ad-tab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 18px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+  transition: all .2s ease;
+  position: relative;
+}
+.ad-tab:hover { color: #1c4e14; }
+.ad-tab.active {
+  background: white;
+  color: #1c4e14;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.ad-tab-badge {
+  background: #e74c3c;
+  color: white;
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 10px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+/* ── NOTIFICATION DOTS for new verification types ── */
+.tb-notif-dot.verification_request  { background: #8e44ad; }
+.tb-notif-dot.verification_approved { background: #1d9bf0; }
+.tb-notif-dot.verification_rejected { background: #e74c3c; }

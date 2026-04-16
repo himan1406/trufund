@@ -43,7 +43,7 @@ body {
 
 .brand {
     position: absolute;
-    top: 52px;
+    top: 48px;
     left: 50px;
     font-family: "PoppinsExtraBold";
     font-size: 44px;
@@ -102,7 +102,7 @@ body {
     bottom: 35px;
     background: #f3f3f3;
     border-radius: 32px;
-    padding: 35px 45px;
+    padding: 45px 45px;
     display: flex;
     flex-direction: column;
     z-index: 1;
@@ -783,6 +783,11 @@ body {
     font-size: 13px;
     margin: 0;
     opacity: 0.8;
+}
+
+.ed-ended-card {
+    background: #eceff1;
+    color: #455a64;
 }
 
 .spin {

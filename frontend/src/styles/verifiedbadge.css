@@ -1,0 +1,16 @@
+/* verifiedbadge.css — import in global.css or App.css */
+
+.vb-wrap {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin-left: 4px;
+  line-height: 1;
+}
+
+.vb-verified,
+.vb-admin {
+  display: block;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2));
+}

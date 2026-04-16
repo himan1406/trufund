@@ -3,18 +3,6 @@ import { useNavigate } from "react-router-dom"
 import "../styles/editprofile.css"
 
 import {
-  LayoutDashboard,
-  ZodiacSagittarius,
-  Trophy,
-  History,
-  Blend,
-  KeyboardMusic,
-  Users,
-  Settings,
-  MessageCircleQuestionMark,
-  Search,
-  CircleArrowDown,
-  Bell,
   Camera,
   User,
   Lock,
@@ -23,9 +11,13 @@ import {
   Eye,
   EyeOff,
   Shield,
+  Landmark,
 } from "lucide-react"
 
+import Sidebar from "../components/Sidebar"
+
 import defaultProfile from "../assets/images/default_profile.jpg"
+import Topbar from "../components/Topbar"
 
 export default function EditProfile() {
 
@@ -60,6 +52,13 @@ export default function EditProfile() {
   const [passwordSaving, setPasswordSaving] = useState(false)
   const [passwordMsg, setPasswordMsg] = useState(null)
 
+  /* payout/bank form */
+  const [bankName, setBankName] = useState("")
+  const [bankNum, setBankNum] = useState("")
+  const [bankIfsc, setBankIfsc] = useState("")
+  const [bankSaving, setBankSaving] = useState(false)
+  const [bankMsg, setBankMsg] = useState(null)
+
   const storedUsername = localStorage.getItem("username") || "Username"
 
   /* ── FETCH CURRENT USER ── */
@@ -75,6 +74,9 @@ export default function EditProfile() {
         setUsername(data.user.username || "")
         setBio(data.user.bio || "")
         setShowDonationHistory(data.user.show_donation_history ?? true)
+        setBankName(data.user.bank_account_name || "")
+        setBankNum(data.user.bank_account_num || "")
+        setBankIfsc(data.user.bank_ifsc || "")
       } catch (err) {
         console.error(err)
       } finally {
@@ -212,6 +214,43 @@ export default function EditProfile() {
     }
   }
 
+  /* ── SAVE BANK DETAILS ── */
+  const handleBankSave = async (e) => {
+    e.preventDefault()
+    setBankMsg(null)
+
+    if (!bankName.trim() || !bankNum.trim() || !bankIfsc.trim()) {
+      setBankMsg({ type: "error", text: "Please fill all bank details to link your account." })
+      return
+    }
+
+    setBankSaving(true)
+    try {
+      const res = await fetch("http://localhost:5000/api/users/profile", {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bank_account_name: bankName.trim(),
+          bank_account_num: bankNum.trim(),
+          bank_ifsc: bankIfsc.trim()
+        })
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        setBankMsg({ type: "error", text: data.error || "Failed to update bank details" })
+        return
+      }
+
+      setBankMsg({ type: "success", text: "Bank details saved securely!" })
+    } catch (err) {
+      setBankMsg({ type: "error", text: "Server error. Try again." })
+    } finally {
+      setBankSaving(false)
+    }
+  }
+
   const displayAvatar = avatarPreview || currentUser?.profile_image || defaultProfile
 
   return (
@@ -219,53 +258,13 @@ export default function EditProfile() {
       <div className="background"></div>
       <div className="brand">TruFund</div>
 
-      {/* SIDEBAR */}
-      <div className="sidebar">
-        <div className="nav">
-          <div className="nav-item" onClick={() => navigate("/dashboard")}>
-            <LayoutDashboard className="nav-icon" />Dashboard
-          </div>
-          <div className="nav-item" onClick={() => navigate("/events")}><ZodiacSagittarius className="nav-icon" />Explore</div>
-          <div className="nav-item"><Trophy className="nav-icon" />Leaderboard</div>
-          <div className="nav-item" onClick={() => navigate("/donor-history")}>
-            <History className="nav-icon" />Donor History
-          </div>
-          <div className="nav-item"><Blend className="nav-icon" />Following</div>
-          <div className="nav-item" onClick={() => navigate("/creator-studio")}><KeyboardMusic className="nav-icon" />Creator Studio</div>
-        </div>
-        <div className="support">
-          <p>Support</p>
-          <div className="nav-item"><Users className="nav-icon" />Community</div>
-          <div className="nav-item"><Settings className="nav-icon" />Settings</div>
-          <div className="nav-item"><MessageCircleQuestionMark className="nav-icon" />Help & Support</div>
-        </div>
-      </div>
+      <Sidebar />
 
       {/* MAIN CARD */}
       <div className="dashboard-card">
 
         {/* TOPBAR */}
-        <div className="topbar">
-          <h2>Edit Profile</h2>
-          <div className="search-container">
-            <Search className="search-icon" />
-            <input className="search" placeholder="Search Events, NGOs, People" />
-          </div>
-          <div className="profile">
-            <Bell className="notification-icon" />
-            <div className="profile-dropdown">
-              <CircleArrowDown className="profile-icon" onClick={() => setMenuOpen(!menuOpen)} />
-              <span className="username">{localStorage.getItem("username") || storedUsername}</span>
-              <img src={displayAvatar} alt="profile" className="profile-avatar" />
-              {menuOpen && (
-                <div className="dropdown-menu">
-                  <div className="dropdown-item" onClick={() => { setMenuOpen(false); navigate("/profile") }}>Profile</div>
-                  <div className="dropdown-item" onClick={() => setMenuOpen(false)}>Edit Profile</div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <Topbar title="Edit Profile" profileImage={displayAvatar} />
 
         {/* BODY */}
         {loading ? (
@@ -498,6 +497,55 @@ export default function EditProfile() {
 
                 </form>
 
+              </div>
+
+              {/* PAYOUT SETTINGS */}
+              <div className="ep-card ep-password-card" style={{ marginTop: "20px" }}>
+                <div className="ep-card-header">
+                  <Landmark size={18} />
+                  <h3>Payout Settings (Escrow)</h3>
+                </div>
+                <p className="ep-password-hint">
+                  Link your bank account to receive funds. When you reach a milestone, funds are safely transferred from the Escrow to this account.
+                </p>
+                <form className="ep-form" onSubmit={handleBankSave}>
+                  <div className="ep-field">
+                    <label>Account Holder Name</label>
+                    <input
+                      type="text"
+                      value={bankName}
+                      onChange={e => { setBankName(e.target.value); setBankMsg(null) }}
+                      placeholder="Name exactly as on bank account"
+                    />
+                  </div>
+                  <div className="ep-field">
+                    <label>Account Number</label>
+                    <input
+                      type="text"
+                      value={bankNum}
+                      onChange={e => { setBankNum(e.target.value); setBankMsg(null) }}
+                      placeholder="Bank Account Number"
+                    />
+                  </div>
+                  <div className="ep-field">
+                    <label>IFSC Code</label>
+                    <input
+                      type="text"
+                      value={bankIfsc}
+                      onChange={e => { setBankIfsc(e.target.value.toUpperCase()); setBankMsg(null) }}
+                      placeholder="e.g. HDFC0001234"
+                    />
+                  </div>
+                  {bankMsg && (
+                    <div className={`ep-msg ${bankMsg.type}`}>
+                      {bankMsg.type === "success" ? <CheckCircle size={15} /> : <XCircle size={15} />}
+                      {bankMsg.text}
+                    </div>
+                  )}
+                  <button type="submit" className="ep-btn-primary" disabled={bankSaving}>
+                    {bankSaving ? "Linking..." : "Link Bank Account"}
+                  </button>
+                </form>
               </div>
 
             </div>

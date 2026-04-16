@@ -244,18 +244,24 @@ exports.getPendingProofs = async (req, res) => {
               m.title AS milestone_title, m.release_order, m.percentage_amount,
               e.title AS event_title, e.current_amount, e.escrow_balance,
               u.username AS org_username, u.profile_image AS org_avatar,
+              u.bank_account_name, u.bank_account_num, u.bank_ifsc,
               array_agg(
                 jsonb_build_object('url', pm.media_url, 'type', pm.media_type, 'label', pm.label)
               ) FILTER (WHERE pm.media_id IS NOT NULL) AS media
        FROM milestone_proofs p
        JOIN event_milestones m ON p.milestone_id = m.milestone_id
        JOIN events e ON p.event_id = e.event_id
-       JOIN users u ON p.submitted_by = u.user_id
+       JOIN users u ON e.creator_id = u.user_id
        LEFT JOIN proof_media pm ON pm.proof_id = p.proof_id
        WHERE p.status = 'pending'
-       GROUP BY p.proof_id, m.milestone_id, e.event_id, u.user_id
+       GROUP BY p.proof_id, m.milestone_id, e.event_id, u.user_id, u.username, u.profile_image, 
+                u.bank_account_name, u.bank_account_num, u.bank_ifsc,
+                m.title, m.release_order, m.percentage_amount, e.title, e.current_amount, e.escrow_balance
        ORDER BY p.submitted_at ASC`
         )
+        // DEBUG LOG TO SEE WHAT THE ADMIN IS RECEIVING
+        console.log("PENDING PROOFS SENT TO ADMIN:", JSON.stringify(result.rows, null, 2));
+        
         res.json({ proofs: result.rows })
     } catch (err) {
         console.error("GET PENDING PROOFS ERROR:", err)
@@ -277,14 +283,16 @@ exports.approveProof = async (req, res) => {
     try {
         await client.query("BEGIN")
 
-        /* get proof + milestone + event */
+        /* get proof + milestone + event + org bank details */
         const proofRes = await client.query(
             `SELECT p.*, m.percentage_amount, m.release_order, m.event_id,
               m.title AS milestone_title,
-              e.current_amount, e.escrow_balance, e.creator_id, e.title AS event_title
+              e.current_amount, e.escrow_balance, e.creator_id, e.title AS event_title,
+              u.bank_account_name, u.bank_account_num
        FROM milestone_proofs p
        JOIN event_milestones m ON p.milestone_id = m.milestone_id
        JOIN events e ON m.event_id = e.event_id
+       JOIN users u ON e.creator_id = u.user_id
        WHERE p.proof_id = $1 AND p.status = 'pending'`,
             [proof_id]
         )
@@ -326,6 +334,13 @@ exports.approveProof = async (req, res) => {
         const balRes = await client.query(
             `SELECT escrow_balance FROM events WHERE event_id = $1`, [proof.event_id]
         )
+        
+        let releaseNote = `Milestone "${proof.milestone_title}" approved — funds released`
+        if (proof.bank_account_name && proof.bank_account_num) {
+             const maskedNum = proof.bank_account_num.slice(-4)
+             releaseNote = `Funds released to ${proof.bank_account_name} (A/c ending in ${maskedNum})`
+        }
+
         await client.query(
             `INSERT INTO escrow_ledger (event_id, milestone_id, type, amount, balance_after, note)
        VALUES ($1,$2,'release',$3,$4,$5)`,
@@ -334,7 +349,7 @@ exports.approveProof = async (req, res) => {
                 proof.milestone_id,
                 releaseAmount,
                 parseFloat(balRes.rows[0].escrow_balance),
-                `Milestone "${proof.milestone_title}" approved — funds released`,
+                releaseNote,
             ]
         )
 

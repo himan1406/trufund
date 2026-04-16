@@ -5,6 +5,7 @@ import SearchBar from "./SearchBar"
 import { useSearch } from "../hooks/useSearch"
 import defaultProfile from "../assets/images/default_profile.jpg"
 import "../styles/topbar.css"
+import "../styles/verifiedbadge.css"
 
 export default function Topbar({ title, profileImage }) {
   const navigate = useNavigate()
@@ -66,6 +67,21 @@ export default function Topbar({ title, profileImage }) {
 
   const storedUsername = localStorage.getItem("username") || "Username"
 
+  const handleLogout = async () => {
+    try {
+      await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        credentials: "include"
+      })
+    } catch (err) {
+      console.error("Logout error:", err)
+    } finally {
+      localStorage.removeItem("username")
+      setProfileOpen(false)
+      navigate("/login")
+    }
+  }
+
   return (
     <div className="topbar">
       <h2>{title}</h2>
@@ -125,6 +141,8 @@ export default function Topbar({ title, profileImage }) {
             <div className="tb-slide-item" onClick={() => { setProfileOpen(false); navigate("/profile") }}>👤 Profile</div>
             <div className="tb-slide-item" onClick={() => { setProfileOpen(false); navigate("/edit-profile") }}>✏️ Edit Profile</div>
             <div className="tb-slide-item" onClick={() => { setProfileOpen(false); navigate("/creator-studio") }}>🎵 Creator Studio</div>
+            <div className="tb-slide-divider" />
+            <div className="tb-slide-item" onClick={handleLogout} style={{ color: "#d9534f" }}>🚪 Logout</div>
           </div>
         </div>
 

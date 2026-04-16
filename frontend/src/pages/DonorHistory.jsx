@@ -3,21 +3,14 @@ import { useNavigate } from "react-router-dom"
 import "../styles/donorhistory.css"
 
 import {
-  LayoutDashboard,
-  ZodiacSagittarius,
-  Trophy,
-  History,
-  Blend,
-  KeyboardMusic,
-  Users,
-  Settings,
-  MessageCircleQuestionMark,
   Heart,
   TrendingUp,
   Calendar,
   DollarSign,
   Filter,
 } from "lucide-react"
+
+import Sidebar from "../components/Sidebar"
 
 import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
@@ -61,39 +54,21 @@ export default function DonorHistory() {
   const totalDonated = donations.reduce((sum, d) => sum + parseFloat(d.amount), 0)
 
   /* unique campaigns supported */
-  const uniqueCampaigns = new Set(donations.map(d => d.campaign_id)).size
+  const uniqueCampaigns = new Set(donations.map(d => d.event_id)).size
 
   /* filter categories derived from donation data */
-  const filterOptions = ["All", ...new Set(donations.map(d => d.campaign_title))]
+  const filterOptions = ["All", ...new Set(donations.map(d => d.event_title))]
 
   const filtered = filter === "All"
     ? donations
-    : donations.filter(d => d.campaign_title === filter)
+    : donations.filter(d => d.event_title === filter)
 
   return (
     <div className="dashboard-wrapper">
       <div className="background"></div>
       <div className="brand">TruFund</div>
 
-      {/* SIDEBAR */}
-      <div className="sidebar">
-        <div className="nav">
-          <div className="nav-item" onClick={() => navigate("/dashboard")}>
-            <LayoutDashboard className="nav-icon" />Dashboard
-          </div>
-          <div className="nav-item" onClick={() => navigate("/events")}><ZodiacSagittarius className="nav-icon" />Explore</div>
-          <div className="nav-item"><Trophy className="nav-icon" />Leaderboard</div>
-          <div className="nav-item dh-active"><History className="nav-icon" />Donor History</div>
-          <div className="nav-item" onClick={() => navigate("/following")}><Blend className="nav-icon" />Following</div>
-          <div className="nav-item" onClick={() => navigate("/creator-studio")}><KeyboardMusic className="nav-icon" />Creator Studio</div>
-        </div>
-        <div className="support">
-          <p>Support</p>
-          <div className="nav-item"><Users className="nav-icon" />Community</div>
-          <div className="nav-item"><Settings className="nav-icon" />Settings</div>
-          <div className="nav-item"><MessageCircleQuestionMark className="nav-icon" />Help & Support</div>
-        </div>
-      </div>
+      <Sidebar activePage="history" />
 
       {/* MAIN CARD */}
       <div className="dashboard-card">
@@ -133,7 +108,7 @@ export default function DonorHistory() {
                     <DollarSign size={20} />
                   </div>
                   <div className="dh-stat-info">
-                    <span className="dh-stat-num">${totalDonated.toFixed(2)}</span>
+                    <span className="dh-stat-num">₹{totalDonated.toLocaleString("en-IN")}</span>
                     <span className="dh-stat-label">Total Contributed</span>
                   </div>
                 </div>
@@ -169,7 +144,7 @@ export default function DonorHistory() {
                 <div className="dh-filter-bar">
                   <Filter size={14} className="dh-filter-icon" />
                   <div className="dh-filters">
-                    {["All", ...new Set(donations.map(d => d.campaign_title))].map(f => (
+                    {["All", ...new Set(donations.map(d => d.event_title))].map(f => (
                       <button
                         key={f}
                         className={filter === f ? "dh-filter-btn active" : "dh-filter-btn"}
@@ -202,12 +177,12 @@ export default function DonorHistory() {
 
                       <div className="dh-item-left">
                         <div className="dh-amount-badge">
-                          ${parseFloat(d.amount).toFixed(2)}
+                          ₹{parseFloat(d.amount).toLocaleString("en-IN")}
                         </div>
                       </div>
 
                       <div className="dh-item-center">
-                        <span className="dh-campaign-name">{d.campaign_title}</span>
+                        <span className="dh-campaign-name">{d.event_title}</span>
                         {d.message && (
                           <span className="dh-message">"{d.message}"</span>
                         )}

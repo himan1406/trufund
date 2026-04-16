@@ -2,36 +2,25 @@ import { useState, useEffect } from "react"
 import "../styles/profile.css"
 
 import {
-  LayoutDashboard, ZodiacSagittarius, Trophy, History,
-  Blend, KeyboardMusic, Users, Settings, MessageCircleQuestionMark,
   Heart, UserPlus,
 } from "lucide-react"
 
+import Sidebar from "../components/Sidebar"
+
 import Topbar from "../components/Topbar"
+import VerifiedBadge from "../components/VerifiedBadge"
 import CreatePostModal from "../components/CreatePostModal"
 import { PostCard } from "../pages/HashtagFeed"
 import defaultProfile from "../assets/images/default_profile.jpg"
 import { useNavigate } from "react-router-dom"
 
-const mockTopEvents = [
-  { org: "GreenRoots Foundation", event: "Big Feed Drive", progress: 72 },
-  { org: "EarthKind Initiative", event: "Helping The Homeless", progress: 55 },
-  { org: "BrightFuture Fund", event: "Book Donations", progress: 88 },
-  { org: "BrightFuture Fund", event: "School Supplies Drive", progress: 40 },
-  { org: "Warriors With Cause", event: "Old Age Home Drive", progress: 63 },
-]
-
-const mockTrending = [
-  { title: "The Waves", sub: "Studio Shodwe" },
-  { title: "End of the Night", sub: "Matt Zhang" },
-  { title: "Between Us", sub: "Neil Tran" },
-]
-
 export default function Profile() {
   const [profileData, setProfileData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
-  const [posts, setPosts] = useState([])
+  const [loading, setLoading]   = useState(true)
+  const [error, setError]       = useState("")
+  const [posts, setPosts]       = useState([])
+  const [topEvents, setTopEvents]   = useState([])
+  const [trendingTags, setTrending] = useState([])
 
   const navigate = useNavigate()
   const username = localStorage.getItem("username") || "Username"
@@ -39,10 +28,16 @@ export default function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/users/profile", { credentials: "include" })
-        if (!res.ok) { if (res.status === 401) { navigate("/login"); return } throw new Error() }
-        const data = await res.json()
+        const [profileRes, eventsRes, hashRes] = await Promise.all([
+          fetch("http://localhost:5000/api/users/profile", { credentials: "include" }),
+          fetch("http://localhost:5000/api/events?status=active&limit=5", { credentials: "include" }),
+          fetch("http://localhost:5000/api/posts/trending/hashtags", { credentials: "include" }),
+        ])
+        if (!profileRes.ok) { if (profileRes.status === 401) { navigate("/login"); return } throw new Error() }
+        const data = await profileRes.json()
         setProfileData(data)
+        if (eventsRes.ok) { const d = await eventsRes.json(); setTopEvents(d.events || []) }
+        if (hashRes.ok)   { const d = await hashRes.json();   setTrending(d.hashtags || []) }
 
         /* fetch user's posts */
         const postsRes = await fetch(`http://localhost:5000/api/posts/user/${data.user.username}`, { credentials: "include" })
@@ -67,22 +62,7 @@ export default function Profile() {
       <div className="background"></div>
       <div className="brand">TruFund</div>
 
-      <div className="sidebar">
-        <div className="nav">
-          <div className="nav-item" onClick={() => navigate("/dashboard")}><LayoutDashboard className="nav-icon" />Dashboard</div>
-          <div className="nav-item"><ZodiacSagittarius className="nav-icon" />Explore</div>
-          <div className="nav-item"><Trophy className="nav-icon" />Leaderboard</div>
-          <div className="nav-item" onClick={() => navigate("/donor-history")}><History className="nav-icon" />Donor History</div>
-          <div className="nav-item" onClick={() => navigate("/following")}><Blend className="nav-icon" />Following</div>
-          <div className="nav-item" onClick={() => navigate("/creator-studio")}><KeyboardMusic className="nav-icon" />Creator Studio</div>
-        </div>
-        <div className="support">
-          <p>Support</p>
-          <div className="nav-item"><Users className="nav-icon" />Community</div>
-          <div className="nav-item"><Settings className="nav-icon" />Settings</div>
-          <div className="nav-item"><MessageCircleQuestionMark className="nav-icon" />Help & Support</div>
-        </div>
-      </div>
+      <Sidebar />
 
       <div className="dashboard-card">
         <Topbar title="Profile" profileImage={profileData?.user?.profile_image} />
@@ -98,7 +78,10 @@ export default function Profile() {
                         <img src={profileData?.user?.profile_image || defaultProfile} alt="avatar" className="profile-hero-avatar" />
                       </div>
                       <div className="profile-hero-info">
-                        <h2 className="profile-username">@{profileData?.user?.username || username}</h2>
+                        <h2 className="profile-username">
+                          @{profileData?.user?.username || username}
+                          <VerifiedBadge isVerified={profileData?.user?.is_verified_org} isAdmin={profileData?.user?.is_admin} size={18} />
+                        </h2>
                         {profileData?.user?.bio && <p className="pp-bio">{profileData.user.bio}</p>}
                         <div className="profile-divider" />
                         <div className="profile-stats">
@@ -135,7 +118,7 @@ export default function Profile() {
                         <div className="donation-list">
                           {donations.map((d) => (
                             <div className="donation-item" key={d.donation_id}>
-                              <div className="donation-amount">${d.amount}</div>
+                              <div className="donation-amount">₹{parseFloat(d.amount).toLocaleString("en-IN")}</div>
                               <div className="donation-info">
                                 <span className="donation-campaign">{d.campaign_title}</span>
                                 {d.message && <span className="donation-message">{d.message}</span>}
@@ -182,28 +165,33 @@ export default function Profile() {
 
           <div className="profile-right">
             <div className="profile-panel">
-              <div className="panel-header"><h3>Top Events</h3><span className="panel-more">•••</span></div>
-              {mockTopEvents.map((e, i) => (
-                <div className="profile-event-item" key={i}>
-                  <div className="event-avatar-placeholder" />
-                  <div className="event-info">
-                    <span className="event-org">{e.org}</span>
-                    <span className="event-name">{e.event}</span>
-                    <div className="event-progress-bar"><div className="event-progress-fill" style={{ width: `${e.progress}%` }} /></div>
+              <div className="panel-header"><h3>Top Events</h3><span className="panel-more" onClick={() => navigate("/events")} style={{cursor:"pointer"}}>See all</span></div>
+              {topEvents.length === 0
+                ? <p style={{fontFamily:"Montserrat",fontSize:12,color:"#aaa",padding:"8px 0"}}>No active events yet</p>
+                : topEvents.map((e, i) => (
+                  <div className="profile-event-item" key={i} onClick={() => navigate(`/events/${e.event_id}`)} style={{cursor:"pointer"}}>
+                    <div className="event-avatar-placeholder" style={{overflow:"hidden",background:e.cover_image?"none":"#d0d0d0"}}>
+                      {e.cover_image && <img src={e.cover_image} alt={e.title} style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:"50%"}} />}
+                    </div>
+                    <div className="event-info">
+                      <span className="event-org">@{e.creator?.username || "org"}</span>
+                      <span className="event-name">{e.title}</span>
+                      <div className="event-progress-bar"><div className="event-progress-fill" style={{ width: `${e.progress}%` }} /></div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              }
             </div>
             <div className="profile-panel trending-panel">
-              <div className="panel-header"><h3>Trending</h3><span className="panel-more">•••</span></div>
-              {mockTrending.map((t, i) => (
-                <div className="trending-item" key={i}>
-                  <div className="trending-avatar" />
+              <div className="panel-header"><h3>Trending Hashtags</h3><span className="panel-more">•••</span></div>
+              {(trendingTags.length > 0 ? trendingTags.slice(0,5) : ["crowdfunding","donate","charity","helpothers","community"].map(t=>({tag:t,post_count:0}))).map((t, i) => (
+                <div className="trending-item" key={i} onClick={() => navigate(`/hashtag/${t.tag}`)} style={{cursor:"pointer"}}>
+                  <div className="trending-avatar" style={{background:"#e8f5e9",display:"flex",alignItems:"center",justifyContent:"center",color:"#1c4e14",fontWeight:700,fontSize:16}}>#</div>
                   <div className="trending-info">
-                    <span className="trending-title">{t.title}</span>
-                    <span className="trending-sub">{t.sub}</span>
+                    <span className="trending-title">#{t.tag}</span>
+                    <span className="trending-sub">{t.post_count > 0 ? `${t.post_count} posts` : "Explore"}</span>
                   </div>
-                  <button className="trending-play">▶</button>
+                  <button className="trending-play" onClick={ev => { ev.stopPropagation(); navigate(`/hashtag/${t.tag}`) }}>→</button>
                 </div>
               ))}
             </div>

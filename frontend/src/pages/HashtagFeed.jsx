@@ -3,14 +3,16 @@ import { useNavigate, useParams } from "react-router-dom"
 import "../styles/hashtagfeed.css"
 
 import {
-  LayoutDashboard, ZodiacSagittarius, Trophy, History,
-  Blend, KeyboardMusic, Users, Settings, MessageCircleQuestionMark,
   Hash, Heart, Trash2, ChevronLeft, ChevronRight,
+  MessageCircle, Send, X as XIcon,
 } from "lucide-react"
+
+import Sidebar from "../components/Sidebar"
 
 import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
 import defaultProfile from "../assets/images/default_profile.jpg"
+import VerifiedBadge from "../components/VerifiedBadge"
 
 export default function HashtagFeed() {
   const { tag } = useParams()
@@ -78,34 +80,7 @@ export default function HashtagFeed() {
       <div className="background"></div>
       <div className="brand">TruFund</div>
 
-      <div className="sidebar">
-        <div className="nav">
-          <div className="nav-item" onClick={() => navigate("/dashboard")}>
-            <LayoutDashboard className="nav-icon" />Dashboard
-          </div>
-          <div className="nav-item" onClick={() => navigate("/events")}>
-            <ZodiacSagittarius className="nav-icon" />Explore
-          </div>
-          <div className="nav-item">
-            <Trophy className="nav-icon" />Leaderboard
-          </div>
-          <div className="nav-item" onClick={() => navigate("/donor-history")}>
-            <History className="nav-icon" />Donor History
-          </div>
-          <div className="nav-item" onClick={() => navigate("/following")}>
-            <Blend className="nav-icon" />Following
-          </div>
-          <div className="nav-item" onClick={() => navigate("/creator-studio")}>
-            <KeyboardMusic className="nav-icon" />Creator Studio
-          </div>
-        </div>
-        <div className="support">
-          <p>Support</p>
-          <div className="nav-item"><Users className="nav-icon" />Community</div>
-          <div className="nav-item"><Settings className="nav-icon" />Settings</div>
-          <div className="nav-item"><MessageCircleQuestionMark className="nav-icon" />Help & Support</div>
-        </div>
-      </div>
+      <Sidebar />
 
       <div className="dashboard-card">
         <Topbar title={`#${tag}`} profileImage={profileImage} />
@@ -159,9 +134,61 @@ export default function HashtagFeed() {
    SHARED POST CARD — used in HashtagFeed and Feed
 ============================================================ */
 export function PostCard({ post, onLike, onDelete, navigate, storedUsername }) {
-  const [mediaIndex, setMediaIndex] = useState(0)
+  const [mediaIndex, setMediaIndex]         = useState(0)
+  const [showComments, setShowComments]     = useState(false)
+  const [comments, setComments]             = useState([])
+  const [commentsLoaded, setCommentsLoaded] = useState(false)
+  const [newComment, setNewComment]         = useState("")
+  const [posting, setPosting]               = useState(false)
+  const [commentCount, setCommentCount]     = useState(post.comment_count || 0)
+
   const media = post.media || []
   const isOwn = post.user.username === storedUsername
+
+  const loadComments = async () => {
+    if (commentsLoaded) { setShowComments(prev => !prev); return }
+    try {
+      const res = await fetch(`http://localhost:5000/api/posts/${post.post_id}/comments`, { credentials: "include" })
+      if (res.ok) {
+        const data = await res.json()
+        setComments(data.comments || [])
+        setCommentsLoaded(true)
+      }
+    } catch (err) { console.error(err) }
+    setShowComments(true)
+  }
+
+  const handleAddComment = async (e) => {
+    e.preventDefault()
+    if (!newComment.trim() || posting) return
+    setPosting(true)
+    try {
+      const res = await fetch(`http://localhost:5000/api/posts/${post.post_id}/comments`, {
+        method: "POST", credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: newComment.trim() }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setComments(prev => [...prev, data.comment])
+        setCommentCount(c => c + 1)
+        setNewComment("")
+      }
+    } catch (err) { console.error(err) }
+    finally { setPosting(false) }
+  }
+
+  const handleDeleteComment = async (comment_id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/posts/comments/${comment_id}`, {
+        method: "DELETE", credentials: "include"
+      })
+      if (res.ok) {
+        setComments(prev => prev.filter(c => c.comment_id !== comment_id))
+        setCommentCount(c => Math.max(0, c - 1))
+      }
+    } catch (err) { console.error(err) }
+  }
 
   const prev = (e) => {
     e.stopPropagation()
@@ -258,7 +285,7 @@ export function PostCard({ post, onLike, onDelete, navigate, storedUsername }) {
             className="post-author-avatar"
           />
           <div className="post-author-info">
-            <span className="post-author-username">@{post.user.username}</span>
+            <span className="post-author-username" style={{display:"flex",alignItems:"center",gap:3}}>@{post.user.username}<VerifiedBadge isVerified={post.user.is_verified_org} isAdmin={post.user.is_admin} size={13} /></span>
             <span className="post-author-date">
               {new Date(post.created_at).toLocaleDateString("en-US", {
                 month: "short",
@@ -299,6 +326,11 @@ export function PostCard({ post, onLike, onDelete, navigate, storedUsername }) {
             <span>{post.like_count}</span>
           </button>
 
+          <button className="post-comment-btn" onClick={loadComments}>
+            <MessageCircle size={15} />
+            <span>{commentCount}</span>
+          </button>
+
           {isOwn && onDelete && (
             <button
               className="post-delete-btn"
@@ -308,6 +340,49 @@ export function PostCard({ post, onLike, onDelete, navigate, storedUsername }) {
             </button>
           )}
         </div>
+
+        {/* COMMENTS SECTION */}
+        {showComments && (
+          <div className="post-comments">
+            {comments.length === 0 ? (
+              <p className="post-comments-empty">No comments yet. Be the first!</p>
+            ) : (
+              <div className="post-comments-list">
+                {comments.map(c => (
+                  <div className="post-comment-item" key={c.comment_id}>
+                    <img
+                      src={c.profile_image || "/src/assets/images/default_profile.jpg"}
+                      alt={c.username}
+                      className="post-comment-avatar"
+                      onClick={() => navigate(`/profile/${c.username}`)}
+                    />
+                    <div className="post-comment-body">
+                      <span className="post-comment-username" onClick={() => navigate(`/profile/${c.username}`)}>@{c.username}</span>
+                      <span className="post-comment-text">{c.content}</span>
+                    </div>
+                    {c.username === storedUsername && (
+                      <button className="post-comment-delete" onClick={() => handleDeleteComment(c.comment_id)}>
+                        <XIcon size={11} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            <form className="post-comment-form" onSubmit={handleAddComment}>
+              <input
+                className="post-comment-input"
+                placeholder="Write a comment..."
+                value={newComment}
+                onChange={e => setNewComment(e.target.value)}
+                maxLength={500}
+              />
+              <button type="submit" className="post-comment-submit" disabled={posting || !newComment.trim()}>
+                <Send size={14} />
+              </button>
+            </form>
+          </div>
+        )}
 
       </div>
     </div>

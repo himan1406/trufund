@@ -17,10 +17,27 @@ import CreatorStudio from "./pages/CreatorStudio"
 import EventFeed from "./pages/EventFeed"
 import EventDetail from "./pages/EventDetail"
 import AdminDashboard from "./pages/AdminDashboard"
+import Leaderboard from "./pages/Leaderboard"
+import Settings from "./pages/Settings"
 
-<Route path="/dashboard" element={<Dashboard />} />
+import { useEffect } from "react"
 
 function App() {
+  useEffect(() => {
+    const applyTheme = () => {
+      const theme = localStorage.getItem("theme") || "light"
+      document.body.className = ""
+      if (theme !== "light") {
+        document.body.classList.add(`theme-${theme}`)
+      }
+    }
+    applyTheme()
+
+    // Listen for custom theme updates from inside Settings.jsx
+    window.addEventListener("themeChange", applyTheme)
+    return () => window.removeEventListener("themeChange", applyTheme)
+  }, [])
+
   return (
     <Router>
 
@@ -57,6 +74,10 @@ function App() {
         <Route path="/events/:id" element={<EventDetail />} />
 
         <Route path="/admin" element={<AdminDashboard />} />
+
+        <Route path="/leaderboard" element={<Leaderboard />} />
+
+        <Route path="/settings" element={<Settings />} />
 
       </Routes>
 

@@ -3,11 +3,11 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import "../styles/eventdetail.css"
 
 import {
-    LayoutDashboard, ZodiacSagittarius, Trophy, History,
-    Blend, KeyboardMusic, Users, Settings, MessageCircleQuestionMark,
     Heart, ChevronLeft, ChevronRight, Target, Calendar,
-    CheckCircle, X, Loader,
+    CheckCircle, X, Loader, Share2, RefreshCw
 } from "lucide-react"
+
+import Sidebar from "../components/Sidebar"
 
 import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
@@ -41,13 +41,17 @@ export default function EventDetail() {
 
     /* donation form */
     const [amount, setAmount] = useState("")
-    const [isAnonymous, setIsAnonymous] = useState(false)
+    const [isAnonymous, setIsAnonymous] = useState(localStorage.getItem("alwaysAnonymous") === "true")
     const [donationMsg, setDonationMsg] = useState("")
     const [donating, setDonating] = useState(false)
     const [donateError, setDonateError] = useState("")
 
     /* milestones */
     const [milestones, setMilestones] = useState([])
+
+    /* share + refresh */
+    const [shareMsg, setShareMsg]     = useState("")
+    const [refreshing, setRefreshing] = useState(false)
 
     /* success banner */
     const [showSuccess, setShowSuccess] = useState(false)
@@ -101,6 +105,31 @@ export default function EventDetail() {
                 setEvent(prev => ({ ...prev, donations: data.donations }))
             }
         } catch (err) { console.error(err) }
+    }
+
+    const handleShare = () => {
+        const url = window.location.href
+        if (navigator.share) {
+            navigator.share({ title: event?.title || "TruFund Event", url }).catch(() => {})
+        } else {
+            navigator.clipboard.writeText(url).then(() => {
+                setShareMsg("Link copied!")
+                setTimeout(() => setShareMsg(""), 2500)
+            })
+        }
+    }
+
+    const handleManualRefresh = async () => {
+        setRefreshing(true)
+        try {
+            const [eventRes, donRes] = await Promise.all([
+                fetch(`http://localhost:5000/api/events/${id}`, { credentials: "include" }),
+                fetch(`http://localhost:5000/api/payments/donations/${id}`, { credentials: "include" }),
+            ])
+            if (eventRes.ok) { const d = await eventRes.json(); setEvent(d.event) }
+            if (donRes.ok)   { const d = await donRes.json(); setEvent(prev => ({ ...prev, donations: d.donations })) }
+        } catch (err) { console.error(err) }
+        finally { setRefreshing(false) }
     }
 
     const handleDonate = async (e) => {
@@ -228,22 +257,7 @@ export default function EventDetail() {
             <div className="background"></div>
             <div className="brand">TruFund</div>
 
-            <div className="sidebar">
-                <div className="nav">
-                    <div className="nav-item" onClick={() => navigate("/dashboard")}><LayoutDashboard className="nav-icon" />Dashboard</div>
-                    <div className="nav-item" onClick={() => navigate("/events")}><ZodiacSagittarius className="nav-icon" />Explore</div>
-                    <div className="nav-item"><Trophy className="nav-icon" />Leaderboard</div>
-                    <div className="nav-item" onClick={() => navigate("/donor-history")}><History className="nav-icon" />Donor History</div>
-                    <div className="nav-item" onClick={() => navigate("/following")}><Blend className="nav-icon" />Following</div>
-                    <div className="nav-item" onClick={() => navigate("/creator-studio")}><KeyboardMusic className="nav-icon" />Creator Studio</div>
-                </div>
-                <div className="support">
-                    <p>Support</p>
-                    <div className="nav-item"><Users className="nav-icon" />Community</div>
-                    <div className="nav-item"><Settings className="nav-icon" />Settings</div>
-                    <div className="nav-item"><MessageCircleQuestionMark className="nav-icon" />Help & Support</div>
-                </div>
-            </div>
+            <Sidebar />
 
             <div className="dashboard-card">
                 <Topbar title="Event" profileImage={profileImage} />
@@ -329,12 +343,23 @@ export default function EventDetail() {
 
                                 {/* DONATION STREAM */}
                                 <div className="ed-donations-section">
-                                    <h3 className="ed-donations-title">
-                                        Donation Activity
-                                        {event.donations?.length > 0 && (
-                                            <span className="ed-donations-count"> · {event.donations.length}</span>
-                                        )}
-                                    </h3>
+                                    <div className="ed-donations-header">
+                                        <h3 className="ed-donations-title">
+                                            Donation Activity
+                                            {event.donations?.length > 0 && (
+                                                <span className="ed-donations-count"> · {event.donations.length}</span>
+                                            )}
+                                        </h3>
+                                        <div className="ed-donations-actions">
+                                            <button className="ed-refresh-btn" onClick={handleManualRefresh} disabled={refreshing} title="Refresh">
+                                                <RefreshCw size={14} className={refreshing ? "spin" : ""} />
+                                            </button>
+                                            <button className="ed-share-btn" onClick={handleShare}>
+                                                <Share2 size={14} />
+                                                <span>{shareMsg || "Share"}</span>
+                                            </button>
+                                        </div>
+                                    </div>
                                     {!event.donations || event.donations.length === 0 ? (
                                         <div className="ed-donations-empty">
                                             <Heart size={28} strokeWidth={1.2} />
@@ -470,6 +495,14 @@ export default function EventDetail() {
                                         <CheckCircle size={32} />
                                         <h3>Goal Reached!</h3>
                                         <p>This event has reached its donation goal. Thank you to all donors!</p>
+                                    </div>
+                                )}
+
+                                {event.status === "ended" && (
+                                    <div className="ed-completed-card ed-ended-card">
+                                        <Calendar size={32} />
+                                        <h3>Fundraiser Ended</h3>
+                                        <p>The deadline for this fundraiser has passed. It is no longer accepting donations.</p>
                                     </div>
                                 )}
 

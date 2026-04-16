@@ -59,6 +59,24 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Internal server error", details: err.message })
 })
 
+/* ── AUTO-EXPIRE EVENTS ── */
+// Runs every 5 minutes to mark events as 'ended' if their end_date has passed
+setInterval(async () => {
+  try {
+    const pool = require("./config/db")
+    const result = await pool.query(
+      `UPDATE events 
+       SET status = 'ended', updated_at = NOW() 
+       WHERE status = 'active' AND end_date < NOW()`
+    )
+    if (result.rowCount > 0) {
+      console.log(`⌛ Auto-expired ${result.rowCount} events`)
+    }
+  } catch (err) {
+    console.error("AUTO-EXPIRE ERROR:", err)
+  }
+}, 5 * 60 * 1000)
+
 /* ── START ── */
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`🚀 TruFund server running on port ${PORT}`))

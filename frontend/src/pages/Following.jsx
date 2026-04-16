@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom"
 import "../styles/following.css"
 
 import {
-  LayoutDashboard, ZodiacSagittarius, Trophy, History,
-  Blend, KeyboardMusic, Users, Settings, MessageCircleQuestionMark,
   UserMinus, UserCheck,
 } from "lucide-react"
+
+import Sidebar from "../components/Sidebar"
 
 import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
@@ -64,22 +64,7 @@ export default function Following() {
       <div className="background"></div>
       <div className="brand">TruFund</div>
 
-      <div className="sidebar">
-        <div className="nav">
-          <div className="nav-item" onClick={() => navigate("/dashboard")}><LayoutDashboard className="nav-icon" />Dashboard</div>
-          <div className="nav-item" onClick={() => navigate("/events")}><ZodiacSagittarius className="nav-icon" />Explore</div>
-          <div className="nav-item"><Trophy className="nav-icon" />Leaderboard</div>
-          <div className="nav-item" onClick={() => navigate("/donor-history")}><History className="nav-icon" />Donor History</div>
-          <div className="nav-item fw-active"><Blend className="nav-icon" />Following</div>
-          <div className="nav-item" onClick={() => navigate("/creator-studio")}><KeyboardMusic className="nav-icon" />Creator Studio</div>
-        </div>
-        <div className="support">
-          <p>Support</p>
-          <div className="nav-item"><Users className="nav-icon" />Community</div>
-          <div className="nav-item"><Settings className="nav-icon" />Settings</div>
-          <div className="nav-item"><MessageCircleQuestionMark className="nav-icon" />Help & Support</div>
-        </div>
-      </div>
+      <Sidebar activePage="following" />
 
       <div className="dashboard-card">
         <Topbar title="Following" profileImage={profileImage} />

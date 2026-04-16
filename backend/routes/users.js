@@ -13,6 +13,14 @@ const {
   updateProfile,
   uploadProfilePic,
   getFollowing,
+  applyVerification,
+  getVerificationStatus,
+  getPendingVerifications,
+  approveVerification,
+  rejectVerification,
+  getLeaderboardTotal,
+  getLeaderboardSingle,
+  getAdminPendingCounts,
 } = require("../controllers/userController")
 
 const protect = require("../middleware/authMiddleware")
@@ -52,6 +60,24 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 })
 
+/* ── MULTER for verification documents ── */
+const verifStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadsDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase()
+    cb(null, `verif_${req.user.user_id}_${Date.now()}_${Math.random().toString(36).slice(2,6)}${ext}`)
+  }
+})
+const VERIF_MIMES = ["image/jpeg","image/jpg","image/png","image/webp","application/pdf"]
+const uploadVerif = multer({
+  storage: verifStorage,
+  fileFilter: (req, file, cb) => {
+    VERIF_MIMES.includes(file.mimetype.toLowerCase()) ? cb(null, true)
+      : cb(new Error("Only images and PDF documents are allowed"))
+  },
+  limits: { fileSize: 20 * 1024 * 1024, files: 10 }
+})
+
 /* ── ROUTES ── */
 router.get("/search",              protect, searchUsers)
 router.get("/following",           protect, getFollowing)
@@ -69,6 +95,11 @@ router.post(
   },
   uploadProfilePic
 )
+
+router.get("/leaderboard/total",   protect, getLeaderboardTotal)
+router.get("/leaderboard/single",  protect, getLeaderboardSingle)
+
+router.get("/admin/pending-counts", protect, getAdminPendingCounts)
 
 router.get("/:username",           protect, getPublicProfile)
 router.post("/:username/follow",   protect, followUser)

@@ -3,11 +3,10 @@ import { useNavigate } from "react-router-dom"
 import "../styles/eventfeed.css"
 
 import {
-    LayoutDashboard, ZodiacSagittarius, Trophy, History,
-    Blend, KeyboardMusic, Users, Settings, MessageCircleQuestionMark,
-    Heart, Target, Calendar,
+    Heart, Target, Calendar, Compass
 } from "lucide-react"
 
+import Sidebar from "../components/Sidebar"
 import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
 import defaultProfile from "../assets/images/default_profile.jpg"
@@ -48,22 +47,7 @@ export default function EventFeed() {
             <div className="background"></div>
             <div className="brand">TruFund</div>
 
-            <div className="sidebar">
-                <div className="nav">
-                    <div className="nav-item" onClick={() => navigate("/dashboard")}><LayoutDashboard className="nav-icon" />Dashboard</div>
-                    <div className="nav-item ef-active"><ZodiacSagittarius className="nav-icon" />Explore</div>
-                    <div className="nav-item"><Trophy className="nav-icon" />Leaderboard</div>
-                    <div className="nav-item" onClick={() => navigate("/donor-history")}><History className="nav-icon" />Donor History</div>
-                    <div className="nav-item" onClick={() => navigate("/following")}><Blend className="nav-icon" />Following</div>
-                    <div className="nav-item" onClick={() => navigate("/creator-studio")}><KeyboardMusic className="nav-icon" />Creator Studio</div>
-                </div>
-                <div className="support">
-                    <p>Support</p>
-                    <div className="nav-item"><Users className="nav-icon" />Community</div>
-                    <div className="nav-item"><Settings className="nav-icon" />Settings</div>
-                    <div className="nav-item"><MessageCircleQuestionMark className="nav-icon" />Help & Support</div>
-                </div>
-            </div>
+            <Sidebar activePage="explore" />
 
             <div className="dashboard-card">
                 <Topbar title="Explore Events" profileImage={profileImage} />
@@ -88,7 +72,7 @@ export default function EventFeed() {
                         <div className="ef-loading">Loading events...</div>
                     ) : events.length === 0 ? (
                         <div className="ef-empty">
-                            <ZodiacSagittarius size={48} strokeWidth={1.2} />
+                            <Compass size={48} strokeWidth={1.2} />
                             <h3>No events found</h3>
                             <p>Try a different category or check back later.</p>
                         </div>

@@ -278,7 +278,7 @@ exports.deletePost = async (req, res) => {
 async function getPostById(post_id, viewer_id) {
   const postResult = await pool.query(
     `SELECT p.post_id, p.caption, p.like_count, p.comment_count, p.created_at,
-            u.user_id, u.username, u.profile_image
+            u.user_id, u.username, u.profile_image, u.is_verified_org, u.is_admin
      FROM posts p
      JOIN users u ON p.user_id = u.user_id
      WHERE p.post_id = $1`,
@@ -313,9 +313,11 @@ async function getPostById(post_id, viewer_id) {
     created_at:    post.created_at,
     liked:         likedResult.rows.length > 0,
     user: {
-      user_id:       post.user_id,
-      username:      post.username,
-      profile_image: post.profile_image || null,
+      user_id:         post.user_id,
+      username:        post.username,
+      profile_image:   post.profile_image || null,
+      is_verified_org: post.is_verified_org || false,
+      is_admin:        post.is_admin || false,
     },
     media:    mediaResult.rows,
     hashtags: hashtagResult.rows.map(r => r.tag),

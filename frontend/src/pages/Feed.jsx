@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom"
 import "../styles/feed.css"
 
 import {
-  LayoutDashboard, ZodiacSagittarius, Trophy, History,
-  Blend, KeyboardMusic, Users, Settings, MessageCircleQuestionMark,
   ImagePlus, X, Send, Loader,
 } from "lucide-react"
+
+import Sidebar from "../components/Sidebar"
 
 import Topbar from "../components/Topbar"
 import CreatePostModal from "../components/CreatePostModal"
@@ -18,7 +18,8 @@ export default function Feed() {
 
   const [posts, setPosts]         = useState([])
   const [loading, setLoading]     = useState(true)
-  const [profileImage, setProfileImage] = useState(null)
+  const [profileImage, setProfileImage]   = useState(null)
+  const [trendingTags, setTrendingTags]   = useState([])
 
   /* create post state */
   const [caption, setCaption]     = useState("")
@@ -34,9 +35,10 @@ export default function Feed() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const [profileRes, feedRes] = await Promise.all([
-          fetch("http://localhost:5000/api/users/profile", { credentials: "include" }),
-          fetch("http://localhost:5000/api/posts/feed",    { credentials: "include" }),
+        const [profileRes, feedRes, hashRes] = await Promise.all([
+          fetch("http://localhost:5000/api/users/profile",           { credentials: "include" }),
+          fetch("http://localhost:5000/api/posts/feed",              { credentials: "include" }),
+          fetch("http://localhost:5000/api/posts/trending/hashtags", { credentials: "include" }),
         ])
         if (!profileRes.ok) { if (profileRes.status === 401) { navigate("/login"); return } }
 
@@ -46,6 +48,10 @@ export default function Feed() {
         if (feedRes.ok) {
           const feedData = await feedRes.json()
           setPosts(feedData.posts || [])
+        }
+        if (hashRes.ok) {
+          const hashData = await hashRes.json()
+          setTrendingTags(hashData.hashtags || [])
         }
       } catch (err) {
         console.error(err)
@@ -141,22 +147,7 @@ export default function Feed() {
       <div className="background"></div>
       <div className="brand">TruFund</div>
 
-      <div className="sidebar">
-        <div className="nav">
-          <div className="nav-item" onClick={() => navigate("/dashboard")}><LayoutDashboard className="nav-icon" />Dashboard</div>
-          <div className="nav-item" onClick={() => navigate("/events")}><ZodiacSagittarius className="nav-icon" />Explore</div>
-          <div className="nav-item"><Trophy className="nav-icon" />Leaderboard</div>
-          <div className="nav-item" onClick={() => navigate("/donor-history")}><History className="nav-icon" />Donor History</div>
-          <div className="nav-item" onClick={() => navigate("/following")}><Blend className="nav-icon" />Following</div>
-          <div className="nav-item" onClick={() => navigate("/creator-studio")}><KeyboardMusic className="nav-icon" />Creator Studio</div>
-        </div>
-        <div className="support">
-          <p>Support</p>
-          <div className="nav-item"><Users className="nav-icon" />Community</div>
-          <div className="nav-item"><Settings className="nav-icon" />Settings</div>
-          <div className="nav-item"><MessageCircleQuestionMark className="nav-icon" />Help & Support</div>
-        </div>
-      </div>
+      <Sidebar />
 
       <div className="dashboard-card">
         <Topbar title="Feed" profileImage={profileImage} />
@@ -236,9 +227,24 @@ export default function Feed() {
             {loading ? (
               <div className="feed-loading">Loading feed...</div>
             ) : posts.length === 0 ? (
-              <div className="feed-empty">
-                <p>No posts yet.</p>
-                <span>Follow people or post something to get started!</span>
+              <div className="feed-discover">
+                <h3 className="feed-discover-title">Discover posts</h3>
+                <p className="feed-discover-sub">Follow people or explore trending topics to fill your feed.</p>
+                <div className="feed-discover-tags">
+                  {(trendingTags.length > 0 ? trendingTags : [
+                    {tag:"crowdfunding",post_count:0},{tag:"donate",post_count:0},
+                    {tag:"charity",post_count:0},{tag:"helpothers",post_count:0},
+                    {tag:"community",post_count:0},{tag:"fundraiser",post_count:0},
+                  ]).map(t => (
+                    <div key={t.tag} className="feed-discover-tag" onClick={() => navigate(`/hashtag/${t.tag}`)}>
+                      <span className="feed-hashtag-tag">#{t.tag}</span>
+                      {t.post_count > 0 && <span className="feed-discover-count">{t.post_count} posts</span>}
+                    </div>
+                  ))}
+                </div>
+                <button className="feed-discover-explore" onClick={() => navigate("/events")}>
+                  Browse Fundraiser Events →
+                </button>
               </div>
             ) : (
               <div className="feed-list">
@@ -262,17 +268,13 @@ export default function Feed() {
               <div className="feed-panel-header">
                 <h3>Popular Hashtags</h3>
               </div>
-              {[
-                "crowdfunding", "donate", "charity", "helpothers",
-                "community", "fundraiser", "ngo", "giveback",
-                "socialgood", "impact"
-              ].map(t => (
-                <div
-                  key={t}
-                  className="feed-hashtag-item"
-                  onClick={() => navigate(`/hashtag/${t}`)}
-                >
-                  <span className="feed-hashtag-tag">#{t}</span>
+              {(trendingTags.length > 0
+                ? trendingTags.slice(0, 10)
+                : ["crowdfunding","donate","charity","helpothers","community","fundraiser","ngo","giveback","socialgood","impact"].map(t => ({tag:t,post_count:0}))
+              ).map(t => (
+                <div key={t.tag} className="feed-hashtag-item" onClick={() => navigate(`/hashtag/${t.tag}`)}>
+                  <span className="feed-hashtag-tag">#{t.tag}</span>
+                  {t.post_count > 0 && <span className="feed-hashtag-count">{t.post_count}</span>}
                 </div>
               ))}
             </div>

@@ -7,7 +7,7 @@ body { margin: 0; font-family: "Montserrat"; }
 .dashboard-wrapper { height: 100vh; width: 100%; position: relative; overflow: hidden; }
 .background { position: absolute; width: 100%; height: 100%; background: linear-gradient(90deg, #1c4e14, #97a6c7); z-index: 0; }
 .background::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url("../assets/images/background.png"); background-size: cover; background-position: center; opacity: 0.25; }
-.brand { position: absolute; top: 52px; left: 50px; font-family: "PoppinsExtraBold"; font-size: 44px; color: white; text-shadow: 0 4px 12px rgba(0,0,0,.45); z-index: 2; }
+.brand { position: absolute; top: 48px; left: 50px; font-family: "PoppinsExtraBold"; font-size: 44px; color: white; text-shadow: 0 4px 12px rgba(0,0,0,.45); z-index: 2; }
 .sidebar { position: absolute; left: 50px; top: 170px; width: 240px; color: white; z-index: 2; }
 .nav-item { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; cursor: pointer; font-weight: 500; font-family: "Montserrat"; text-shadow: 0 4px 12px rgba(0,0,0,.55); transition: all .25s ease; }
 .nav-item:hover { transform: translateX(6px); opacity: .9; }
@@ -17,7 +17,7 @@ body { margin: 0; font-family: "Montserrat"; }
 .support { margin-top: 140px; }
 .support p { opacity: .8; margin-bottom: 18px; }
 
-.dashboard-card { position: absolute; left: 300px; top: 35px; right: 40px; bottom: 35px; background: #f3f3f3; border-radius: 32px; padding: 35px 45px; display: flex; flex-direction: column; z-index: 1; overflow: hidden; }
+.dashboard-card { position: absolute; left: 300px; top: 35px; right: 40px; bottom: 35px; background: #f3f3f3; border-radius: 32px; padding: 45px 45px; display: flex; flex-direction: column; z-index: 1; overflow: hidden; }
 
 /* TOPBAR */
 .topbar { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }

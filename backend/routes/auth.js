@@ -18,4 +18,9 @@ router.post("/signup", authLimiter, signup)
 router.post("/login",  authLimiter, login)
 router.post("/logout", protect,     logout)
 
+/* lightweight auth check — used by LoadingScreen to verify cookie */
+router.get("/me", protect, (req, res) => {
+  res.json({ user_id: req.user.user_id, username: req.user.username })
+})
+
 module.exports = router

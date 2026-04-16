@@ -1,5 +1,5 @@
 import { useState, useRef } from "react"
-import { CheckCircle, Clock, Lock, AlertCircle, ChevronDown, ChevronUp, ImagePlus, X, Loader } from "lucide-react"
+import { CheckCircle, Clock, Lock, AlertCircle, ChevronDown, ChevronUp, ImagePlus, X, Loader, Shield } from "lucide-react"
 import "../styles/milestonetracker.css"
 
 const STATUS_ICON = {
@@ -119,7 +119,7 @@ export default function MilestoneTracker({
                                     {m.status === "approved" && (
                                         <div className="mt-released">
                                             <CheckCircle size={14} />
-                                            ₹{parseFloat(m.amount_released || 0).toLocaleString("en-IN")} released to organiser
+                                            ₹{parseFloat(m.amount_released || 0).toLocaleString("en-IN")} released to linked bank account
                                         </div>
                                     )}
 
@@ -127,9 +127,18 @@ export default function MilestoneTracker({
                                     {m.status === "submitted" && (
                                         <div className="mt-pending-notice">
                                             <Clock size={14} />
-                                            Proof submitted — awaiting admin review
+                                            Proof submitted — awaiting admin review (Funds secured in Escrow)
                                         </div>
                                     )}
+
+                                    {/* LOCKED / AVAILABLE — show escrow protection */}
+                                    {(m.status === "locked" || m.status === "available") && (
+                                        <div className="mt-escrow-protected">
+                                            <Shield size={14} />
+                                            Funds secured in Escrow
+                                        </div>
+                                    )}
+
 
                                     {/* REJECTED — show admin note */}
                                     {m.status === "rejected" && m.proof_status === "rejected" && m.admin_note && (

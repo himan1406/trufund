@@ -1,0 +1,338 @@
+@font-face { font-family: "PoppinsExtraBold"; src: url("../assets/fonts/Poppins-ExtraBold.ttf"); }
+@font-face { font-family: "Montserrat";      src: url("../assets/fonts/Montserrat-Regular.ttf"); }
+@font-face { font-family: "MontserratBold";  src: url("../assets/fonts/Montserrat-Bold.ttf"); }
+
+body { margin: 0; font-family: "Montserrat"; }
+
+.dashboard-wrapper  { height: 100vh; width: 100%; position: relative; overflow: hidden; }
+.background         { position: absolute; width: 100%; height: 100%; background: linear-gradient(90deg, #1c4e14, #97a6c7); z-index: 0; }
+.background::after  { content: ""; position: absolute; inset: 0; background: url("../assets/images/background.png") center/cover; opacity: 0.25; }
+.brand              { position: absolute; top: 48px; left: 50px; font-family: "PoppinsExtraBold"; font-size: 44px; color: white; text-shadow: 0 4px 12px rgba(0,0,0,.45); z-index: 2; }
+.sidebar            { position: absolute; left: 50px; top: 170px; width: 240px; color: white; z-index: 2; }
+.nav-item           { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; cursor: pointer; font-weight: 500; font-family: "Montserrat"; text-shadow: 0 4px 12px rgba(0,0,0,.55); transition: all .25s ease; }
+.nav-item:hover     { transform: translateX(6px); opacity: .9; }
+.nav-icon           { width: 20px; height: 20px; color: white; flex-shrink: 0; }
+.nav-item:hover .nav-icon { transform: scale(1.15); }
+.lb-active          { font-weight: 700; }
+.support            { margin-top: 140px; }
+.support p          { opacity: .8; margin-bottom: 18px; }
+.dashboard-card     { position: absolute; left: 300px; top: 35px; right: 40px; bottom: 35px; background: #f3f3f3; border-radius: 32px; padding: 45px 45px; display: flex; flex-direction: column; z-index: 1; overflow: hidden; }
+
+/* ── BODY ── */
+.lb-body {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.lb-body::-webkit-scrollbar { width: 4px; }
+.lb-body::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+/* ── HEADER ── */
+.lb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.lb-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.lb-crown { color: #f4c430; flex-shrink: 0; }
+
+.lb-title {
+  font-family: "PoppinsExtraBold";
+  font-size: 22px;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.lb-subtitle {
+  font-family: "Montserrat";
+  font-size: 13px;
+  color: #888;
+  margin: 3px 0 0;
+}
+
+/* ── TABS ── */
+.lb-tabs {
+  display: flex;
+  gap: 8px;
+  background: #e9e9e9;
+  padding: 5px;
+  border-radius: 16px;
+}
+
+.lb-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.lb-tab:hover { color: #1c4e14; }
+
+.lb-tab.active {
+  background: white;
+  color: #1c4e14;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* ── LOADING / EMPTY ── */
+.lb-loading {
+  font-family: "Montserrat";
+  font-size: 14px;
+  color: #888;
+  text-align: center;
+  padding: 60px 0;
+}
+
+.lb-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 20px;
+  text-align: center;
+  color: #bbb;
+}
+
+.lb-empty h3 {
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 18px;
+  color: #555;
+  margin: 0;
+}
+
+.lb-empty p {
+  font-family: "Montserrat";
+  font-size: 13px;
+  color: #999;
+  margin: 0;
+}
+
+.lb-cta {
+  padding: 10px 24px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #1c4e14, #3a7d2c);
+  color: white;
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(28,78,20,0.3);
+  transition: all .25s ease;
+  margin-top: 4px;
+}
+.lb-cta:hover { transform: translateY(-2px); }
+
+/* ── PODIUM ── */
+.lb-podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 20px 0;
+}
+
+.lb-podium-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform .2s ease;
+  flex: 1;
+  max-width: 160px;
+}
+.lb-podium-slot:hover { transform: translateY(-4px); }
+
+.lb-podium-crown {
+  font-size: 24px;
+  margin-bottom: -4px;
+  animation: bounce 1s ease infinite alternate;
+}
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-6px); }
+}
+
+.lb-podium-medal { font-size: 20px; }
+
+.lb-podium-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e0e0e0;
+  transition: border-color .2s;
+}
+.lb-podium-slot:hover .lb-podium-avatar { border-color: #1c4e14; }
+
+.lb-podium-avatar-first {
+  width: 68px;
+  height: 68px;
+  border-color: #f4c430;
+  box-shadow: 0 4px 16px rgba(244,196,48,0.5);
+}
+
+.lb-podium-username {
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 12px;
+  color: #1a1a1a;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.lb-podium-amount {
+  font-family: "PoppinsExtraBold";
+  font-size: 13px;
+  color: #1c4e14;
+}
+
+.lb-podium-bar {
+  width: 100%;
+  border-radius: 8px 8px 0 0;
+}
+.first-bar  { height: 80px; background: linear-gradient(180deg, #f4c430, #e0a800); }
+.second-bar { height: 56px; background: linear-gradient(180deg, #b0b0b0, #909090); }
+.third-bar  { height: 40px; background: linear-gradient(180deg, #cd7f32, #a0622a); }
+
+/* ── FULL LIST ── */
+.lb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 24px;
+}
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: white;
+  border-radius: 18px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: all .2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.lb-row:hover { transform: translateX(4px); box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
+
+.lb-row-me {
+  background: #f0f7ee;
+  border: 1.5px solid #c8e6c9;
+}
+
+/* RANK */
+.lb-rank {
+  width: 36px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.lb-rank-medal { font-size: 20px; }
+.lb-rank-num {
+  font-family: "PoppinsExtraBold";
+  font-size: 16px;
+  color: #bbb;
+}
+
+/* AVATAR */
+.lb-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #eee;
+  flex-shrink: 0;
+}
+
+/* INFO */
+.lb-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.lb-info-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.lb-username {
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 14px;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lb-you-badge {
+  background: #1c4e14;
+  color: white;
+  font-family: "Montserrat";
+  font-weight: 700;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.lb-amount {
+  font-family: "PoppinsExtraBold";
+  font-size: 15px;
+  color: #1c4e14;
+  white-space: nowrap;
+}
+
+/* BAR */
+.lb-bar-wrap {
+  width: 100%;
+  height: 5px;
+  background: #eeeeee;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.lb-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1c4e14, #3a7d2c);
+  border-radius: 4px;
+  transition: width .6s ease;
+}
+
+.lb-meta {
+  font-family: "Montserrat";
+  font-size: 11px;
+  color: #aaa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
