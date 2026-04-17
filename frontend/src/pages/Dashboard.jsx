@@ -7,6 +7,7 @@ import CreatePostModal from "../components/CreatePostModal"
 import Sidebar from "../components/Sidebar"
 
 import API_BASE_URL from "../utils/api"
+import trufundPPT from "../assets/docs/TRUFUND_PPT.pdf"
 
 export default function Dashboard(){
 
@@ -69,7 +70,7 @@ return(
         <p className="hero-text">
           TruFund is a community-driven crowdfunding platform that connects individuals, organizations, and donors to support meaningful causes. It enables users to create campaigns for education, healthcare, community development, and more. Through transparency and engagement, TruFund helps people raise funds, inspire contributions, and create real social impact together.
         </p>
-        <button className="learn">Learn More</button>
+        <button className="learn" onClick={() => window.open(trufundPPT, "_blank")}>Learn More</button>
       </div>
 
       <div className="categories">

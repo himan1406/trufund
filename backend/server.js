@@ -21,6 +21,12 @@ if (!fs.existsSync(uploadsDir)) {
   console.log("📁 Created uploads/ directory")
 }
 
+/* ── REQUEST LOGGER (Debug tool) ── */
+app.use((req, res, next) => {
+  console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.path}`);
+  next();
+});
+
 /* ── MIDDLEWARE ── */
 const allowedOrigins = [
   "http://localhost:5173",
@@ -46,6 +52,14 @@ app.use("/api/events", eventRoutes)
 app.use("/api/payments", paymentRoutes)
 app.use("/api/notifications", notificationRoutes)
 app.use("/api/escrow", escrowRoutes)
+
+/* ── PING ROUTE (Connectivity Test) ── */
+app.get("/api/ping", (req, res) => res.json({ status: "alive", time: new Date() }))
+
+/* ── 404 JSON HANDLER (Catches unmatched routes) ── */
+app.use((req, res, next) => {
+  res.status(404).json({ error: `Not Found: ${req.method} ${req.path}` });
+});
 
 /* ── GLOBAL ERROR HANDLER (catches multer + other errors) ── */
 app.use((err, req, res, next) => {
@@ -85,4 +99,4 @@ setInterval(async () => {
 
 /* ── START ── */
 const PORT = process.env.PORT || 5000
-app.listen(PORT, () => console.log(`🚀 TruFund server running on port ${PORT}`))
+app.listen(PORT, () => console.log(`🚀 TruFund DEBUG-MODE server running on port ${PORT}`))

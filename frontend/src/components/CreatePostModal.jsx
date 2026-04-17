@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Plus, X, ImagePlus, Send, Loader } from "lucide-react"
 import "../styles/createpostmodal.css"
 import defaultProfile from "../assets/images/default_profile.jpg"
+import API_BASE_URL from "../utils/api"
 
 export default function CreatePostModal({ profileImage: propProfileImage, onPostCreated }) {
   const navigate      = useNavigate()
@@ -18,7 +19,7 @@ export default function CreatePostModal({ profileImage: propProfileImage, onPost
   /* fetch own profile image if parent didn't pass one */
   useEffect(() => {
     if (propProfileImage) { setOwnImage(propProfileImage); return }
-    fetch("http://localhost:5000/api/users/profile", { credentials: "include" })
+    fetch(`${API_BASE_URL}/api/users/profile`, { credentials: "include" })
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (d?.user?.profile_image) setOwnImage(d.user.profile_image) })
       .catch(() => {})
@@ -59,7 +60,7 @@ export default function CreatePostModal({ profileImage: propProfileImage, onPost
       formData.append("caption", caption.trim())
       files.forEach(f => formData.append("media", f.file))
 
-      const res  = await fetch("http://localhost:5000/api/posts", {
+      const res  = await fetch(`${API_BASE_URL}/api/posts`, {
         method: "POST", credentials: "include", body: formData
       })
       const data = await res.json()

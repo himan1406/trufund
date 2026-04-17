@@ -48,7 +48,7 @@ exports.createPost = async (req, res) => {
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
       const mediaType = file.mimetype.startsWith("video") ? "video" : "image"
-      const mediaUrl = `http://localhost:5000/uploads/${file.filename}`
+      const mediaUrl = `${process.env.BASE_URL || "http://localhost:5000"}/uploads/${file.filename}`
       await client.query(
         `INSERT INTO post_media (post_id, media_url, media_type, position) VALUES ($1, $2, $3, $4)`,
         [post_id, mediaUrl, mediaType, i]

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import API_BASE_URL from "../utils/api"
 
 export function useSearch() {
   const [query, setQuery] = useState("")
@@ -19,7 +20,7 @@ export function useSearch() {
       setSearching(true)
       try {
         const res = await fetch(
-          `http://localhost:5000/api/users/search?q=${encodeURIComponent(query)}`,
+          `${API_BASE_URL}/api/users/search?q=${encodeURIComponent(query)}`,
           { credentials: "include" }
         )
         const data = await res.json()

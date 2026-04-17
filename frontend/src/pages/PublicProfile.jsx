@@ -38,13 +38,13 @@ export default function PublicProfile() {
       setError("")
       try {
         /* fetch own profile image for topbar */
-        const meRes = await fetch("http://localhost:5000/api/users/profile", { credentials: "include" })
+        const meRes = await fetch(`${API_BASE_URL}/api/users/profile`, { credentials: "include" })
         if (meRes.ok) {
           const meData = await meRes.json()
           setMyProfileImage(meData?.user?.profile_image || null)
         }
 
-        const res = await fetch(`http://localhost:5000/api/users/${username}`, {
+        const res = await fetch(`${API_BASE_URL}/api/users/${username}`, {
           credentials: "include"
         })
 
@@ -89,7 +89,7 @@ export default function PublicProfile() {
     setFollowersCount(c => wasFollowing ? c - 1 : c + 1)
 
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${username}/follow`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${username}/follow`, {
         method: wasFollowing ? "DELETE" : "POST",
         credentials: "include"
       })
@@ -247,7 +247,7 @@ export default function PublicProfile() {
                           key={post.post_id}
                           post={post}
                           onLike={async (post_id) => {
-                            const res = await fetch(`http://localhost:5000/api/posts/${post_id}/like`, { method: "POST", credentials: "include" })
+                            const res = await fetch(`${API_BASE_URL}/api/posts/${post_id}/like`, { method: "POST", credentials: "include" })
                             const json = await res.json()
                             if (res.ok) setPosts(prev => prev.map(p => p.post_id === post_id ? { ...p, liked: json.liked, like_count: json.like_count } : p))
                           }}

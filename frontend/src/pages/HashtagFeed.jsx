@@ -57,7 +57,7 @@ export default function HashtagFeed() {
 
   const handleLike = async (post_id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${post_id}/like`, {
+      const res = await fetch(`${API_BASE_URL}/api/posts/${post_id}/like`, {
         method: "POST",
         credentials: "include",
       })
@@ -150,7 +150,7 @@ export function PostCard({ post, onLike, onDelete, navigate, storedUsername }) {
   const loadComments = async () => {
     if (commentsLoaded) { setShowComments(prev => !prev); return }
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${post.post_id}/comments`, { credentials: "include" })
+      const res = await fetch(`${API_BASE_URL}/api/posts/${post.post_id}/comments`, { credentials: "include" })
       if (res.ok) {
         const data = await res.json()
         setComments(data.comments || [])
@@ -165,7 +165,7 @@ export function PostCard({ post, onLike, onDelete, navigate, storedUsername }) {
     if (!newComment.trim() || posting) return
     setPosting(true)
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${post.post_id}/comments`, {
+      const res = await fetch(`${API_BASE_URL}/api/posts/${post.post_id}/comments`, {
         method: "POST", credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: newComment.trim() }),
@@ -182,7 +182,7 @@ export function PostCard({ post, onLike, onDelete, navigate, storedUsername }) {
 
   const handleDeleteComment = async (comment_id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/comments/${comment_id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/posts/comments/${comment_id}`, {
         method: "DELETE", credentials: "include"
       })
       if (res.ok) {

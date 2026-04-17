@@ -4,6 +4,7 @@ import { Bell } from "lucide-react"
 import SearchBar from "./SearchBar"
 import { useSearch } from "../hooks/useSearch"
 import defaultProfile from "../assets/images/default_profile.jpg"
+import API_BASE_URL from "../utils/api"
 import "../styles/topbar.css"
 import "../styles/verifiedbadge.css"
 
@@ -31,7 +32,7 @@ export default function Topbar({ title, profileImage }) {
   useEffect(() => {
     const fetchNotifs = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/notifications", { credentials: "include" })
+        const res = await fetch(`${API_BASE_URL}/api/notifications`, { credentials: "include" })
         if (res.ok) {
           const data = await res.json()
           setNotifs(data.notifications || [])
@@ -47,7 +48,7 @@ export default function Topbar({ title, profileImage }) {
     setProfileOpen(false)
     if (!notifOpen && unread > 0) {
       try {
-        await fetch("http://localhost:5000/api/notifications/read-all", {
+        await fetch(`${API_BASE_URL}/api/notifications/read-all`, {
           method: "PUT", credentials: "include"
         })
         setUnread(0)
@@ -69,7 +70,7 @@ export default function Topbar({ title, profileImage }) {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:5000/api/auth/logout", {
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
         credentials: "include"
       })

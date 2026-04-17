@@ -99,6 +99,15 @@ router.post(
 router.get("/leaderboard/total",   protect, getLeaderboardTotal)
 router.get("/leaderboard/single",  protect, getLeaderboardSingle)
 
+/* ── VERIFICATION ── */
+router.post("/verification/apply",  protect, uploadVerif.array("documents"), applyVerification)
+router.get("/verification/status",  protect, getVerificationStatus)
+
+/* ── ADMIN VERIFICATION ── */
+router.get("/admin/verifications",                   protect, getPendingVerifications)
+router.post("/admin/verifications/:verification_id/approve", protect, approveVerification)
+router.post("/admin/verifications/:verification_id/reject",  protect, rejectVerification)
+
 router.get("/admin/pending-counts", protect, getAdminPendingCounts)
 
 router.get("/:username",           protect, getPublicProfile)

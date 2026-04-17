@@ -185,7 +185,7 @@ exports.submitProof = async (req, res) => {
 
         /* insert media files */
         for (const file of files) {
-            const mediaUrl = `http://localhost:5000/uploads/${file.filename}`
+            const mediaUrl = `${process.env.BASE_URL || "http://localhost:5000"}/uploads/${file.filename}`
             const mediaType = file.mimetype.startsWith("image") ? "image" : "document"
             const label = file.originalname
             await client.query(

@@ -95,7 +95,7 @@ export default function Feed() {
       formData.append("caption", caption.trim())
       files.forEach(f => formData.append("media", f.file))
 
-      const res = await fetch("http://localhost:5000/api/posts", {
+      const res = await fetch(`${API_BASE_URL}/api/posts`, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -118,7 +118,7 @@ export default function Feed() {
   /* ── LIKE ── */
   const handleLike = async (post_id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${post_id}/like`, {
+      const res = await fetch(`${API_BASE_URL}/api/posts/${post_id}/like`, {
         method: "POST", credentials: "include"
       })
       const json = await res.json()
@@ -136,7 +136,7 @@ export default function Feed() {
   const handleDelete = async (post_id) => {
     if (!window.confirm("Delete this post?")) return
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${post_id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/posts/${post_id}`, {
         method: "DELETE", credentials: "include"
       })
       if (res.ok) setPosts(prev => prev.filter(p => p.post_id !== post_id))

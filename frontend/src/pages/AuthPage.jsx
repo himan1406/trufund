@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Navbar from "../components/navbar_temp"
+import API_BASE_URL from "../utils/api"
 
 import "../styles/auth.css"
 import "../styles/forms.css"
@@ -35,7 +36,7 @@ return
 
 try{
 
-const res = await fetch("http://localhost:5000/api/auth/login",{
+const res = await fetch(`${API_BASE_URL}/api/auth/login`,{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
@@ -84,7 +85,7 @@ return
 
 try{
 
-const res = await fetch("http://localhost:5000/api/auth/signup",{
+const res = await fetch(`${API_BASE_URL}/api/auth/signup`,{
 method:"POST",
 headers:{
 "Content-Type":"application/json"

@@ -127,14 +127,14 @@ export default function CreatorStudio() {
             if (endDate) formData.append("end_date", endDate)
             files.forEach(f => formData.append("media", f.file))
 
-            const res = await fetch("http://localhost:5000/api/events", {
+            const res = await fetch(`${API_BASE_URL}/api/events`, {
                 method: "POST", credentials: "include", body: formData
             })
             const data = await res.json()
             if (!res.ok) { setFormError(data.error || "Failed to create event"); return }
 
             /* POST milestones for the new event */
-            const milestoneRes = await fetch(`http://localhost:5000/api/escrow/events/${data.event.event_id}/milestones`, {
+            const milestoneRes = await fetch(`${API_BASE_URL}/api/escrow/events/${data.event.event_id}/milestones`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
@@ -174,15 +174,25 @@ export default function CreatorStudio() {
             formData.append("org_description", verifDesc.trim())
             formData.append("website_url", verifWebsite.trim())
             verifFiles.forEach(f => formData.append("documents", f.file))
-            const res  = await fetch("http://localhost:5000/api/users/verification/apply", {
+            console.log("SENDING REQUEST TO:", `${API_BASE_URL}/api/users/verification/apply`)
+            const res  = await fetch(`${API_BASE_URL}/api/users/verification/apply`, {
                 method: "POST", credentials: "include", body: formData
             })
-            const data = await res.json()
-            if (!res.ok) { setVerifError(data.error || "Failed to submit"); return }
-            setVerifSuccess(data.message)
-            setShowVerifForm(false)
-            setVerifStatus(prev => ({ ...prev, verification_status: "pending" }))
-        } catch { setVerifError("Server error. Try again.") }
+            console.log("RESPONSE RECEIVED:", res.status, res.statusText)
+            const text = await res.text()
+            try {
+                const data = JSON.parse(text)
+                if (!res.ok) { setVerifError(data.error || "Failed to submit"); return }
+                setVerifSuccess(data.message)
+                setShowVerifForm(false)
+                setVerifStatus(prev => ({ ...prev, verification_status: "pending" }))
+            } catch {
+                /* Not JSON — show the raw text (e.g. 404 message) */
+                setVerifError(text.slice(0, 100) || "Server returned an HTML error page.")
+            }
+        } catch (err) {
+            setVerifError(err.message || "Server error. Try again.")
+        }
         finally { setVerifSubmitting(false) }
     }
 
@@ -200,7 +210,7 @@ export default function CreatorStudio() {
     const handleDelete = async (event_id) => {
         if (!window.confirm("Delete this event? This cannot be undone.")) return
         try {
-            const res = await fetch(`http://localhost:5000/api/events/${event_id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/events/${event_id}`, {
                 method: "DELETE", credentials: "include"
             })
             if (res.ok) setMyEvents(prev => prev.filter(e => e.event_id !== event_id))

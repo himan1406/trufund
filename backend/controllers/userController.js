@@ -389,7 +389,6 @@ exports.applyVerification = async (req, res) => {
     res.status(201).json({ message: "Verification application submitted. We'll review it shortly." })
   } catch (err) {
     await client.query("ROLLBACK")
-    const fs = require("fs"), path = require("path")
     for (const file of files) {
       const fp = path.join(__dirname, "../uploads", file.filename)
       if (fs.existsSync(fp)) fs.unlinkSync(fp)

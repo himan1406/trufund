@@ -99,7 +99,7 @@ export default function EventDetail() {
     /* refresh donations from server */
     const refreshDonations = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/payments/donations/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/payments/donations/${id}`, {
                 credentials: "include"
             })
             if (res.ok) {
@@ -125,8 +125,8 @@ export default function EventDetail() {
         setRefreshing(true)
         try {
             const [eventRes, donRes] = await Promise.all([
-                fetch(`http://localhost:5000/api/events/${id}`, { credentials: "include" }),
-                fetch(`http://localhost:5000/api/payments/donations/${id}`, { credentials: "include" }),
+                fetch(`${API_BASE_URL}/api/events/${id}`, { credentials: "include" }),
+                fetch(`${API_BASE_URL}/api/payments/donations/${id}`, { credentials: "include" }),
             ])
             if (eventRes.ok) { const d = await eventRes.json(); setEvent(d.event) }
             if (donRes.ok)   { const d = await donRes.json(); setEvent(prev => ({ ...prev, donations: d.donations })) }
@@ -141,7 +141,7 @@ export default function EventDetail() {
 
         try {
             /* step 1 — create Razorpay order on backend */
-            const orderRes = await fetch("http://localhost:5000/api/payments/create-order", {
+            const orderRes = await fetch(`${API_BASE_URL}/api/payments/create-order`, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
@@ -175,7 +175,7 @@ export default function EventDetail() {
                 handler: async (response) => {
                     /* step 4 — verify payment on backend */
                     try {
-                        const verifyRes = await fetch("http://localhost:5000/api/payments/verify", {
+                        const verifyRes = await fetch(`${API_BASE_URL}/api/payments/verify`, {
                             method: "POST",
                             credentials: "include",
                             headers: { "Content-Type": "application/json" },
@@ -402,7 +402,7 @@ export default function EventDetail() {
                                         isOwner={event.creator.user_id === myUserId}
                                         eventId={id}
                                         onProofSubmitted={() => {
-                                            fetch(`http://localhost:5000/api/escrow/events/${id}/milestones`, { credentials: "include" })
+                                            fetch(`${API_BASE_URL}/api/escrow/events/${id}/milestones`, { credentials: "include" })
                                                 .then(r => r.json())
                                                 .then(d => setMilestones(d.milestones || []))
                                                 .catch(console.error)

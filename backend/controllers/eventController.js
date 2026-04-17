@@ -81,7 +81,7 @@ exports.createEvent = async (req, res) => {
     /* pick first image as cover */
     let cover_image = null
     if (files.length > 0) {
-      cover_image = `http://localhost:5000/uploads/${files[0].filename}`
+      cover_image = `${process.env.BASE_URL || "http://localhost:5000"}/uploads/${files[0].filename}`
     }
 
     const eventRes = await client.query(
@@ -97,7 +97,7 @@ exports.createEvent = async (req, res) => {
 
     /* insert all media */
     for (let i = 0; i < files.length; i++) {
-      const mediaUrl  = `http://localhost:5000/uploads/${files[i].filename}`
+      const mediaUrl  = `${process.env.BASE_URL || "http://localhost:5000"}/uploads/${files[i].filename}`
       const mediaType = files[i].mimetype.startsWith("video") ? "video" : "image"
       await client.query(
         `INSERT INTO event_media (event_id, media_url, media_type, position)

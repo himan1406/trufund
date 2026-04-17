@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import API_BASE_URL from "../utils/api"
 import {
   LayoutDashboard,
   Compass,
@@ -27,13 +28,13 @@ export default function Sidebar({ activePage }) {
     // We check profile to confirm if user is an admin
     const checkAdmin = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/users/profile", { credentials: "include" })
+        const res = await fetch(`${API_BASE_URL}/api/users/profile`, { credentials: "include" })
         if (res.ok) {
           const data = await res.json()
           if (data.user?.is_admin) {
             setIsAdmin(true)
             // Fetch pending counts
-            const countRes = await fetch("http://localhost:5000/api/users/admin/pending-counts", { credentials: "include" })
+            const countRes = await fetch(`${API_BASE_URL}/api/users/admin/pending-counts`, { credentials: "include" })
             if (countRes.ok) {
               const countData = await countRes.json()
               setPendingProofs(countData.pending_proofs || 0)

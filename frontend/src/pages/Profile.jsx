@@ -41,7 +41,7 @@ export default function Profile() {
         if (hashRes.ok)   { const d = await hashRes.json();   setTrending(d.hashtags || []) }
 
         /* fetch user's posts */
-        const postsRes = await fetch(`http://localhost:5000/api/posts/user/${data.user.username}`, { credentials: "include" })
+        const postsRes = await fetch(`${API_BASE_URL}/api/posts/user/${data.user.username}`, { credentials: "include" })
         if (postsRes.ok) {
           const postsData = await postsRes.json()
           setPosts(postsData.posts || [])
@@ -149,7 +149,7 @@ export default function Profile() {
                               key={post.post_id}
                               post={post}
                               onLike={async (post_id) => {
-                                const res = await fetch(`http://localhost:5000/api/posts/${post_id}/like`, { method: "POST", credentials: "include" })
+                                const res = await fetch(`${API_BASE_URL}/api/posts/${post_id}/like`, { method: "POST", credentials: "include" })
                                 const json = await res.json()
                                 if (res.ok) setPosts(prev => prev.map(p => p.post_id === post_id ? { ...p, liked: json.liked, like_count: json.like_count } : p))
                               }}

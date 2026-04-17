@@ -1,5 +1,6 @@
 import { useState, useRef } from "react"
 import { CheckCircle, Clock, Lock, AlertCircle, ChevronDown, ChevronUp, ImagePlus, X, Loader, Shield } from "lucide-react"
+import API_BASE_URL from "../utils/api"
 import "../styles/milestonetracker.css"
 
 const STATUS_ICON = {
@@ -59,7 +60,7 @@ export default function MilestoneTracker({
             formData.append("progress_report", report.trim())
             files.forEach(f => formData.append("proof_files", f.file))
 
-            const res = await fetch(`http://localhost:5000/api/escrow/milestones/${milestone_id}/proof`, {
+            const res = await fetch(`${API_BASE_URL}/api/escrow/milestones/${milestone_id}/proof`, {
                 method: "POST", credentials: "include", body: formData
             })
             const data = await res.json()

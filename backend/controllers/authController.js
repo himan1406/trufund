@@ -82,10 +82,12 @@ exports.login = async (req, res) => {
             { expiresIn }
         )
 
+        const isProd = process.env.NODE_ENV === "production"
+
         res.cookie("token", token, {
             httpOnly: true,
-            secure:   true, // Must be true for sameSite: 'none'
-            sameSite: "none", // Required for cross-site (Vercel -> Render)
+            secure:   isProd,          // True for https (cloud), false for http (local)
+            sameSite: isProd ? "none" : "lax", // Lax is standard for local, None for cross-site
             maxAge,
         })
 
@@ -103,8 +105,7 @@ exports.login = async (req, res) => {
         console.error("LOGIN ERROR:", err)
         res.status(500).json({ 
             error: "Login failed", 
-            details: err.message, // Temporarily show details to debug production issues
-            stack: isDev ? err.stack : undefined 
+            details: isDev ? err.message : "Internal server error"
         })
     }
 }
@@ -114,10 +115,11 @@ exports.login = async (req, res) => {
    LOGOUT
 ========================= */
 exports.logout = async (req, res) => {
+    const isProd = process.env.NODE_ENV === "production"
     res.clearCookie("token", {
         httpOnly: true,
-        secure:   true,
-        sameSite: "none",
+        secure:   isProd,
+        sameSite: isProd ? "none" : "lax",
     })
     res.json({ message: "Logged out successfully" })
 }

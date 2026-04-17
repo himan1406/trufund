@@ -137,7 +137,7 @@ export default function EditProfile() {
     setProfileSaving(true)
     setProfileMsg(null)
     try {
-      const res = await fetch("http://localhost:5000/api/users/profile", {
+      const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -189,7 +189,7 @@ export default function EditProfile() {
 
     setPasswordSaving(true)
     try {
-      const res = await fetch("http://localhost:5000/api/users/profile", {
+      const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -227,7 +227,7 @@ export default function EditProfile() {
 
     setBankSaving(true)
     try {
-      const res = await fetch("http://localhost:5000/api/users/profile", {
+      const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
